@@ -10,18 +10,31 @@
   </head>
 
   <body>
-    <h1>Hello World!</h1>
-    <h3>Can't think of a waifu? Let this app find a waifu for you.</h3>
+    <h1>What the hell is a Waifu???</h1>
+    <h3>A waifu is a fictional character that a person has a strong affection for, often romantic. The term is usually used to describe female characters from anime or related media.</h3>
+    <h3>Don't know any waifus? Let this app find a waifu for you.</h3>
 
+
+
+    <button type="button" onclick="getRandomWaifu()">I'm Feeling Lucky</button>
+    <label for="dropdownMenuForTag">Preferences:</label>
     <select id="dropdownMenuForTag" name="dropdownMenuForTag">
       <option value="waifu">waifu</option>
-      <option value="maid">maid</option> 
+      <option value="maid">maid</option>
+      <option value="marin-kitagawa">marin-kitagawa</option>
+      <option value="raiden-shogun">raiden-shogun</option>
+      <option value="oppai">oppai</option>
+      <option value="selfies">selfies</option>
+      <option value="uniform">uniform</option>
+      <option value="kamisato-ayaka">kamisato-ayaka</option>
     </select>
-
-    <button type="button" onclick="getIncludedTags()">Show waifu types you want in console</button>
-    <button type="button" onclick="getRandomWaifu()">I'm Feeling Lucky</button>
     <button type="button" onclick="clearElementById('pic')">Clear</button>
     
+    <br>
+    <button type="button" onclick="getIncludedTags()">Show waifu types you want in console</button>
+    <br>
+    
+    <div id="waifuism"></div>
     <div id="pic"></div>
     <div id="credits">
       <div id="creditsName"></div>
@@ -31,7 +44,5 @@
       <div id="creditsDeviantart"></div>
     </div>
     <p>Big thanks to <a href="https://github.com/public-apis/public-apis">Public APIs</a> and <a href="waifu.im">Waifu.Im</a></p>
-    <p>“Real stupidity beats artificial intelligence every time.”
-        ― Terry Pratchett, Hogfather </p>
   </body>
 </html>

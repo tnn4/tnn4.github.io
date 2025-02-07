@@ -1,6 +1,23 @@
 // var globals
 // let scoped
 
+const waifuisms = [
+    "You're my hero.", 
+    "I'm always here for you.",
+    "Don't worry, I'll protect you.",
+    "You look so handsome today.",
+    "I love cooking for you.",
+    "I'm so proud of you.",
+    "You're the only one for me.",
+    "Please take care of yourself.",
+    "Don't ever leave me."
+];
+
+function getRandomElement(array){
+    const randomElement = array[Math.floor(Math.random() * array.length)];
+    return randomElement;
+}
+
 var scaleFactor = 0.25;
 var included_tags = ["waifu"];
 
@@ -11,26 +28,29 @@ var url1;
 window.onload = main();
 
 function main() {
+    // Get preference for waifu
     dropdown = document.getElementById("dropdownMenuForTag");
     console.log('dropdown object = ' + dropdown );
 
+    dropdown.addEventListener("change", function(){
+        console.log('dropdown.value = ' + dropdown.value);
+        if(included_tags.length === 0){
+            included_tags.push("waifu");
+        } else { 
+            let index = included_tags.indexOf(dropdown.value);
+            console.log("index = " + index);
+            // add only if it does not exist yet
+            if (index === -1 ) included_tags.splice(0, 1, dropdown.value);
+        }
+    });
+    //
     var1 = document.getElementById("pic");
     console.log('pic = ' + var1 );
 }
 
 
 
-dropdown.addEventListener("change", function(){
-    console.log('dropdown.value = ' + dropdown.value);
-    if(included_tags.length === 0){
-        included_tags.push("waifu");
-    } else { 
-        let index = included_tags.indexOf(dropdown.value);
-        console.log("index = " + index);
-        // add only if it does not exist yet
-        if (index === -1 ) included_tags.splice(0, 1, dropdown.value);
-    }
-});
+
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -141,18 +161,23 @@ async function getRandomWaifu() {
                     console.log('twitter = '+ art_credits_twitter);
                     console.log('deviant = '+ art_credits_deviantArt);
                 }
-
-                
-
-
-
             }
         }
 
         // const json_obj = JSON.parse(json);
 
+        // Add waifuism
+        const waifuismElement = document.getElementById("waifuism");
+        waifuismElement.innerHTML = "";
+        console.log('getRandomElement = ' + getRandomElement(waifuisms));
+        console.log('waifuisms = ' + waifuisms[getRandomElement(waifuisms)]);
+        waifuismElement.innerHTML = '<br><h3>\"' + getRandomElement(waifuisms) + '\"</h3>';
+
         newParagraph = document.createElement("p")
         textNode = document.createTextNode("placeholder");
+
+        // Add the waifuism
+
     } catch(error) {
         console.error(error.message);
     } 
