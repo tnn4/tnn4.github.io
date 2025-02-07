@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script type="text/javascript" src="index.js"></script>
+    <!-- Problem: elements kept giving null. Why: script loaded before DOM was done loading, i.e. DOM was null;
+      Solution: tell script to defer -->
+    <!--See: https://stackoverflow.com/questions/807878/how-to-make-javascript-execute-after-page-load-->
+    <script type="text/javascript" src="index.js" defer></script>
     <meta charset="UTF-8">
-    <title>My First Webpage</title>
+    <title>My Homepage</title>
   </head>
 
   <body>
     <h1>Hello World!</h1>
-    <button type="button" onclick="getRandomQuote()">Get a Random Waifu</button>
+    <h3>Can't think of a waifu? Let this app find a waifu for you.</h3>
+
+    <select id="dropdownMenuForTag" name="dropdownMenuForTag">
+      <option value="waifu">waifu</option>
+      <option value="maid">maid</option> 
+    </select>
+
+    <button type="button" onclick="getIncludedTags()">Show waifu types you want in console</button>
+    <button type="button" onclick="getRandomWaifu()">I'm Feeling Lucky</button>
+    <button type="button" onclick="clearElementById('pic')">Clear</button>
+    
     <div id="pic"></div>
+    
     <p>Big thanks to <a href="https://github.com/public-apis/public-apis">Public APIs</a> and <a href="waifu.im">Waifu.Im</a></p>
     <p>“Real stupidity beats artificial intelligence every time.”
         ― Terry Pratchett, Hogfather </p>
