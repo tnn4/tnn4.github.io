@@ -32,6 +32,9 @@ dropdown.addEventListener("change", function(){
     }
 });
 
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+  }
 
 function getIncludedTags(){
     console.log('included_tags = ' + included_tags);
@@ -54,6 +57,7 @@ async function getRandomWaifu() {
     var textNode;
     var img;
     try {
+        console.log("Trying to fetch from: " + final_url);
         const response = await fetch(final_url);
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
@@ -70,6 +74,8 @@ async function getRandomWaifu() {
             for (var i=0; i < json.images.length; i++){
                 var jsonElement = json.images[i];
                 console.log(jsonElement);
+                
+                // img
                 img = document.createElement('img');
                 
                 img.src = jsonElement.url;
@@ -83,6 +89,63 @@ async function getRandomWaifu() {
 
 
                 document.getElementById('pic').appendChild(img);
+                // End img
+
+                const art_credits_element = document.createElement('p');
+                
+                
+                let artist_name = '';
+                let art_credits_patreon = '';
+                let art_credits_pixiv = '';
+                let art_credits_twitter = '';
+                let art_credits_deviantArt = '';
+                
+                const creditElements = document.getElementById('credits');
+
+                if (jsonElement.artist != null){
+                    if ( jsonElement.artist.name != null){
+                        artist_name = jsonElement.artist.name;
+                        const creditNameElement = document.getElementById('creditsName');
+                        creditNameElement.innerHTML = 'Name: ' + artist_name + '<br>';
+                    } 
+                    if (jsonElement.artist.patreon != null){
+                        art_credits_patreon += jsonElement.artist.patreon;
+                        const creditArtistElement = document.getElementById('creditsPatreon');
+                        creditArtistElement.innerHTML = 'Patreon: ' + '<a href=\"' + art_credits_patreon + `\">${art_credits_patreon}</a>` + '<br>'
+                        
+                    }
+                    if (jsonElement.artist.pixiv != null){
+                        art_credits_pixiv += jsonElement.artist.pixiv;
+                        const creditPixivElement = document.getElementById('creditsPixiv');
+                        creditPixivElement.innerHTML = 'Pixiv: ' + '<a href=\"' + art_credits_pixiv + `\">${art_credits_pixiv}</a>` + '<br>'
+                    }
+                    if (jsonElement.artist.twitter != null){
+                        art_credits_twitter += jsonElement.artist.twitter;
+                        const creditTwitterElement = document.getElementById('creditsTwitter');
+                        creditTwitterElement.innerHTML = 'Twitter: ' + '<a href=\"' + art_credits_twitter + `\">${art_credits_twitter}</a>`+ '<br>'
+                    }
+                    if (jsonElement.artist.deviant_art != null){
+                        art_credits_deviantArt += jsonElement.artist.deviant_art;
+                        const creditDeviantartElement = document.getElementById('creditsDeviantart');
+                        creditDeviantartElement.innerHTML = 'Deviant Art: ' + '<a href=\"' + art_credits_deviantArt + `\">${art_credits_deviantArt}</a>` +'<br>'
+                    }
+
+                    console.log('jsonElement.artist.patreon) = ' + jsonElement.artist.patreon);
+                    console.log('jsonElement.artist.pixiv) = ' + jsonElement.artist.pixiv);
+                    console.log('jsonElement.artist.twitter) = ' + jsonElement.artist.twitter);
+                    console.log('jsonElement.artist.deviantArt) = ' + jsonElement.artist.deviant_art);
+    
+    
+                    console.log('patreon = ' + art_credits_patreon);
+                    console.log('pixiv = '+ art_credits_pixiv);
+                    console.log('twitter = '+ art_credits_twitter);
+                    console.log('deviant = '+ art_credits_deviantArt);
+                }
+
+                
+
+
+
             }
         }
 
