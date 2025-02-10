@@ -1,5 +1,53 @@
+
 // var globals
 // let scoped
+
+// Unique number
+class UniqueRNG {
+    constructor(min, max) {
+      this.numbers = [];
+      for (let i = min; i <= max; i++) {
+        this.numbers.push(i);
+      }
+      this.shuffle(this.numbers);
+    }
+  
+    reset(min, max) {
+      this.numbers = [];
+      for (let i = min; i <= max; i++) {
+        this.numbers.push(i);
+      }
+      this.shuffle(this.numbers);
+      console.log("rng bucket refilled");
+    }
+
+    shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+  
+    draw() {
+      if (this.numbers.length === 0) {
+        // reset
+        this.reset();
+        // throw new Error("No more unique numbers available.");
+      }
+      return this.numbers.pop();
+    }
+}
+// END Unique Number
+
+function shuffleArray(array){
+    // copied array
+    cArray = array.slice(0);
+    for (let i = cArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cArray[i], cArray[j]] = [cArray[j], cArray[i]];
+    }
+    return cArray;
+}
 
 const waifuisms = [
     "You're my hero.", 
@@ -13,13 +61,26 @@ const waifuisms = [
     "Don't ever leave me."
 ];
 
+const preferences = [
+    "maid",
+    "waifu",
+    "marin-kitagawa",
+    "mori-calliope",
+    "raiden-shogun",
+    "oppai",
+    "selfies",
+    "uniform",
+    "kamisato-ayaka"
+]
+
 function getRandomElement(array){
     const randomElement = array[Math.floor(Math.random() * array.length)];
     return randomElement;
 }
 
 var scaleFactor = 0.25;
-var included_tags = ["waifu"];
+var included_tags = [];
+included_tags.push(getRandomElement(preferences));
 
 var dropdown;
 var var1;
@@ -32,25 +93,32 @@ function main() {
     dropdown = document.getElementById("dropdownMenuForTag");
     console.log('dropdown object = ' + dropdown );
 
+    // add functionality for random preference
     dropdown.addEventListener("change", function(){
         console.log('dropdown.value = ' + dropdown.value);
-        if(included_tags.length === 0){
-            included_tags.push("waifu");
-        } else { 
+
+        if (dropdown.value === "random"){
+            let selectedPreference = getRandomElement(preferences);
+            console.log("selected (rng) preference = " + selectedPreference);
+            if (included_tags.length === 0){
+                included_tags.push(selectedPreference);
+                return;
+            }
+            let index = included_tags.indexOf(selectedPreference);
+            if (index === -1 ) included_tags.splice(0,1,selectedPreference);
+            return;
+        } else {
             let index = included_tags.indexOf(dropdown.value);
             console.log("index = " + index);
             // add only if it does not exist yet
             if (index === -1 ) included_tags.splice(0, 1, dropdown.value);
         }
+
     });
     //
     var1 = document.getElementById("pic");
     console.log('pic = ' + var1 );
 }
-
-
-
-
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -71,6 +139,20 @@ async function getRandomWaifu() {
     // Here is an example to get a random image with  maid tags:
     // Set up a url builder for this
     const url_waifuim = "https://api.waifu.im/search";
+    
+    dropdown = document.getElementById("dropdownMenuForTag");
+    if (dropdown.value === "random"){
+        let selectedPreference = getRandomElement(preferences);
+        console.log("selected (rng) preference = " + selectedPreference);
+        if (included_tags.length === 0){
+            included_tags.push(selectedPreference);
+            return;
+        }
+        let index = included_tags.indexOf(selectedPreference);
+        if (index === -1 ) included_tags.splice(0,1,selectedPreference);
+    }
+    
+    
     let url_included_tags = "?included_tags=" + included_tags[0];
     let final_url = url_waifuim + url_included_tags;
     var newParagraph;
@@ -111,6 +193,7 @@ async function getRandomWaifu() {
                 document.getElementById('pic').appendChild(img);
                 // End img
 
+                // Credits
                 const art_credits_element = document.createElement('p');
                 
                 
@@ -160,6 +243,7 @@ async function getRandomWaifu() {
                     console.log('pixiv = '+ art_credits_pixiv);
                     console.log('twitter = '+ art_credits_twitter);
                     console.log('deviant = '+ art_credits_deviantArt);
+                    // End credits
                 }
             }
         }
