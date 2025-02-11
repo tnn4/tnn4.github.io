@@ -2,7 +2,84 @@
 // var globals
 // let scoped
 
+async function setupNekosApi()  {
+    const nekos_base_url='https://nekos.best/api/v2';
+    const nekos = document.getElementById('anime-nekos-api');
+    
+    // Dynamically Get nekos endpoints and generate a dropdown( select) menu
+    const labelForDropdown = document.createElement('label');
+    labelForDropdown.textContent = 'I want...';
+    
+    const dropdownMenu = document.createElement('select');
+    dropdownMenu.setAttribute('id', 'neko-dropdown');
 
+    labelForDropdown.setAttribute('for', 'neko-dropdown');
+    dropdownMenu.appendChild(labelForDropdown);
+    const nekoEndpoints = [];
+    let newOption;
+    let selectedEndpoint = "neko";
+    try{
+        const endpointsResponse = await fetch(nekos_base_url + `/endpoints`);
+        console.log('Fetched from ' + nekos_base_url + `/endpoints`);
+        const endpointsJson = await endpointsResponse.json();
+        console.log(endpointsJson);
+        // Length is underined because the json is not an array 
+        // Misconception: I thought the number of fields would give you the 'length'
+        console.log('endpointsJson.length = '+ endpointsJson.length);
+        Object.keys(endpointsJson).forEach( field => {
+            console.log(`${field}`);
+            nekoEndpoints.push(field);
+            newOption = document.createElement('option');
+            newOption.value = field;
+            newOption.text = field;
+            dropdownMenu.add(newOption);
+        });
+        console.log(nekoEndpoints);
+        for(i=0;i<endpointsJson.length;i++){
+            console.log('endpointsJson[i] = ' + endpointsJson[i]);
+        }
+    }catch(error){
+        console.log('ERROR: Unable to fetch: ' + error);
+    }
+    dropdownMenu.addEventListener("change", function getNekoEndpoint(){
+        selectedEndpoint = dropdownMenu.value;
+    });
+    nekos.appendChild(dropdownMenu);
+    
+
+
+    // nekos button
+    const button = document.createElement('button');
+    const img = document.createElement('img');
+    button.textContent = 'Fetch nekos';
+    button.addEventListener("click", async function pingNekosApi() {
+        const amount = 5;
+        try {
+            const response = await fetch(nekos_base_url + `/${selectedEndpoint}` + `?amount=${amount}`);
+            const json = await response.json();
+            
+            json.results.forEach((element) => {
+                console.log('element = ' + element);
+                console.log('element.artist_href' + element.artist_href);
+            });
+    
+            for(let i=0; i<json.results.length; i++){
+                console.log(json.results[i]);
+            }
+            console.log(json.results[0]);
+            img.src = json.results[0].url;
+            nekos.appendChild(img);
+        } catch (error){
+            console.log('ERROR: Unable to fetch from ')
+        }
+
+
+    });
+    nekos.appendChild(button);
+    // END nekos button
+
+
+}
 
 // Unique number
 class UniqueRNG {
@@ -283,6 +360,9 @@ function main() {
 
     // change background color
     document.getElementById("mybody").classList.add("bg-color");
+
+    // nekos api
+    setupNekosApi();
 
     // Get preference for waifu
     dropdown = document.getElementById("dropdownMenuForTag");
