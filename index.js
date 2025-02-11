@@ -8,13 +8,12 @@ async function setupNekosApi()  {
     
     // Dynamically Get nekos endpoints and generate a dropdown( select) menu
     const labelForDropdown = document.createElement('label');
-    labelForDropdown.textContent = 'I want...';
+    labelForDropdown.textContent = 'I want anime...';
+    labelForDropdown.setAttribute('for', 'neko-dropdown');
     
     const dropdownMenu = document.createElement('select');
     dropdownMenu.setAttribute('id', 'neko-dropdown');
-
-    labelForDropdown.setAttribute('for', 'neko-dropdown');
-    dropdownMenu.appendChild(labelForDropdown);
+    nekos.appendChild(labelForDropdown);
     const nekoEndpoints = [];
     let newOption;
     let selectedEndpoint = "neko";
@@ -51,7 +50,7 @@ async function setupNekosApi()  {
     // nekos button
     const button = document.createElement('button');
     const img = document.createElement('img');
-    button.textContent = 'Fetch nekos';
+    button.textContent = 'Now.';
     button.addEventListener("click", async function pingNekosApi() {
         const amount = 5;
         try {
