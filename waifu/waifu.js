@@ -2,6 +2,44 @@
 // var globals
 // let scoped
 
+// START main
+window.onload = main();
+
+function main() {
+    // Get preference for waifu
+    dropdown = document.getElementById("dropdownMenuForTag");
+    console.log('dropdown object = ' + dropdown );
+
+    // add functionality for random preference
+    dropdown.addEventListener("change", function(){
+        console.log('dropdown.value = ' + dropdown.value);
+
+        if (dropdown.value === "random"){
+            let selectedPreference = getRandomElement(preferences);
+            console.log("selected (rng) preference = " + selectedPreference);
+            if (included_tags.length === 0){
+                included_tags.push(selectedPreference);
+                return;
+            }
+            let index = included_tags.indexOf(selectedPreference);
+            if (index === -1 ) included_tags.splice(0,1,selectedPreference);
+            return;
+        } else {
+            let index = included_tags.indexOf(dropdown.value);
+            console.log("index = " + index);
+            // add only if it does not exist yet
+            if (index === -1 ) included_tags.splice(0, 1, dropdown.value);
+        }
+
+    });
+    //
+    var1 = document.getElementById("pic");
+    console.log('pic = ' + var1 );
+
+    getPterryQuote();
+}
+// END main
+
 // Unique number
 class UniqueRNG {
     constructor(min, max) {
@@ -49,6 +87,8 @@ function shuffleArray(array){
     return cArray;
 }
 
+// START waifu
+
 const waifuisms = [
     "You're my hero.", 
     "I'm always here for you.",
@@ -86,39 +126,7 @@ var dropdown;
 var var1;
 var url1;
 
-window.onload = main();
 
-function main() {
-    // Get preference for waifu
-    dropdown = document.getElementById("dropdownMenuForTag");
-    console.log('dropdown object = ' + dropdown );
-
-    // add functionality for random preference
-    dropdown.addEventListener("change", function(){
-        console.log('dropdown.value = ' + dropdown.value);
-
-        if (dropdown.value === "random"){
-            let selectedPreference = getRandomElement(preferences);
-            console.log("selected (rng) preference = " + selectedPreference);
-            if (included_tags.length === 0){
-                included_tags.push(selectedPreference);
-                return;
-            }
-            let index = included_tags.indexOf(selectedPreference);
-            if (index === -1 ) included_tags.splice(0,1,selectedPreference);
-            return;
-        } else {
-            let index = included_tags.indexOf(dropdown.value);
-            console.log("index = " + index);
-            // add only if it does not exist yet
-            if (index === -1 ) included_tags.splice(0, 1, dropdown.value);
-        }
-
-    });
-    //
-    var1 = document.getElementById("pic");
-    console.log('pic = ' + var1 );
-}
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -267,3 +275,20 @@ async function getRandomWaifu() {
     } 
 }
 
+// END waifu
+
+// START pterry
+const pterryQuotes = [
+    "The trouble with having an open mind, of course, is that people will insist on coming along and trying to put things in it. - Terry Pratchett,Diggers",
+    "Give a man a fire and he's warm for a day, but set fire to him and he's warm for the rest of his life. ― Terry Pratchett, Jingo",
+    "“Some humans would do anything to see if it was possible to do it. If you put a large switch in some cave somewhere, with a sign on it saying 'End-of-the-World Switch. PLEASE DO NOT TOUCH', the paint wouldn't even have time to dry.” ― Terry Pratchett, Thief of Time",
+    "\"And what would humans be without love?\" RARE, said Death. ― Terry Pratchett, Sourcery"
+]
+
+function getPterryQuote(){
+    let pterryQuoteElement = document.getElementById('pterryQuote');
+    let p = document.createElement('p');
+    p.textContent = getRandomElement(pterryQuotes);
+    pterryQuoteElement.appendChild(p);
+}
+// END Pterry

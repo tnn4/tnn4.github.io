@@ -1,0 +1,12 @@
+/* css */
+
+/* background color */
+.bg-color{
+    background-color: peachpuff;
+}
+
+/* dark mode */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+  }
