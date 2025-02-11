@@ -1,5 +1,23 @@
 /* css */
 
+/* START background image */
+.bgImage {
+    background: url(https://tnn4.github.io/img/d9c05b19b4b0be8edd51bde7243a8548.jpeg);
+ }
+ 
+ @media screen and (min-width: 769px) {
+   .bgImage {
+     background: url(https://tnn4.github.io/img/anime-dorogi-35633.jpeg);
+   }
+ }
+ 
+ @media screen and (min-width: 1200px) {
+   .bgImage {
+     background: url(https://tnn4.github.io/img/d9c05b19b4b0be8edd51bde7243a8548.jpeg);
+   }
+ }
+/* END background image */
+
 /* background color */
 .bg-color{
     background-color: peachpuff;
