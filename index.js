@@ -20,7 +20,7 @@ async function setupDeathGame() {
     probInput.id = 'prob-input';
     probInput.type = 'number';
     const executeProbBtn = document.createElement('button');
-    executeProbBtn.textContent = 'BANG'
+    executeProbBtn.textContent = 'SHOOT';
     
     executeProbBtn.addEventListener("click", async function getSuccess() {
         
@@ -47,14 +47,14 @@ async function setupDeathGame() {
         // deathGame.appendChild(bulletsDiv);
         
         if (success) {
-            outcome.innerHTML = `<p style=\'color:red\'>[${trials}]${cartridge}You died.</d>`;
+            outcome.innerHTML = `<p style=\'color:red\'>*BANG*[${trials}]${cartridge}You died. X_X</d>`;
             bulletsLeft = 5;    
         } else if (!success && bulletsLeft === 0){
-            outcome.innerHTML = `<p style=\'color:blue\'>[${trials}]${cartridge}You WIN.</d>`;
+            outcome.innerHTML = `<p style=\'color:blue\'>*BANG*[${trials}]${cartridge}You WIN! :)</d>`;
             bulletsLeft = 5;
         }
         else {
-            outcome.innerHTML = `<p>[${trials}]${cartridge}You live.</d>`;
+            outcome.innerHTML = `<p>*BANG*[${trials}]${cartridge}You live... :|</d>`;
         }
         trials++;
         deathGame.appendChild(outcome);
