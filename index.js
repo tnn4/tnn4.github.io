@@ -2,6 +2,67 @@
 // var globals
 // let scoped
 
+// Death clock
+let trials = 1;
+let maxBullets = 5;
+let bulletsLeft = 5;
+let cartridge = ["","","","",""];
+let gameOver = false;
+var probability = function(n) {
+    return !!n && Math.random() <= n;
+};
+
+async function setupDeathGame() {
+    const deathGame = document.getElementById('death-game');
+    deathGame.innerHTML = '<h2>Russian Roulette</h2><p>Enter a probability [0-1](Russian Roulete ~1/6 or .17):</p>';
+    const bulletsDiv = document.createElement('div');
+    const probInput = document.createElement('input');
+    probInput.id = 'prob-input';
+    probInput.type = 'number';
+    const executeProbBtn = document.createElement('button');
+    executeProbBtn.textContent = 'BANG'
+    
+    executeProbBtn.addEventListener("click", async function getSuccess() {
+        
+        let value = probInput.value;
+        console.log('prob_value =' + value);
+        if(value == null || value == "") {
+            value = 0.17;
+        }
+        probInput.value = 0.17;
+        let success = probability(value);
+        bulletsLeft--;
+        console.log('bullets left = ' + bulletsLeft);
+        let outcome = document.createElement('div');
+        
+        //cartridge +='<p>';
+        for(i=0;i<maxBullets;i++){
+            cartridge[i] = "";
+        }
+        for(i=0;i<bulletsLeft;i++){
+            cartridge[i] = "[]";
+        }
+        // cartridge +='</p>';
+        // bulletsDiv.innerHTML = cartridge;
+        // deathGame.appendChild(bulletsDiv);
+        
+        if (success) {
+            outcome.innerHTML = `<p style=\'color:red\'>[${trials}]${cartridge}You died.</d>`;
+            bulletsLeft = 5;    
+        } else if (!success && bulletsLeft === 0){
+            outcome.innerHTML = `<p style=\'color:blue\'>[${trials}]${cartridge}You WIN.</d>`;
+            bulletsLeft = 5;
+        }
+        else {
+            outcome.innerHTML = `<p>[${trials}]${cartridge}You live.</d>`;
+        }
+        trials++;
+        deathGame.appendChild(outcome);
+    });
+    deathGame.appendChild(probInput);
+    deathGame.appendChild(executeProbBtn);
+}
+
 // see: https://xkcd.com/json.html
 async function setupXkcd() {
     const xkcd_base_url='https://xkcd.com/';
@@ -406,6 +467,9 @@ function main() {
 
     // change background color
     document.getElementById("mybody").classList.add("bg-color");
+
+    //death-game
+    setupDeathGame();
 
     //xkcd
     setupXkcd();
