@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- external styles are defined within <link> element inside <head> -->
+    <link rel="stylesheet" href="index.css">
+    <!-- Problem: elements kept giving null. Why: script loaded before DOM was done loading, i.e. DOM was null;
+      Solution: tell script to defer -->
+    <!--See: https://stackoverflow.com/questions/807878/how-to-make-javascript-execute-after-page-load-->
+    <script type="text/javascript" src="rr.js" defer></script>
+    <meta charset="UTF-8">
+    <title>My Homepage</title>
+  </head>
+
+  <body id="mybody">    
+    <div id="death-game"></div>
+  </body>
+  <footer>
+    <div id="pterryQuote"></div><br>
+    All content is copyright of their respective owners.
+    © 2025 tnn4
+  </footer>
+</html>

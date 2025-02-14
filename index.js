@@ -1,16 +1,45 @@
 // Script for getting random waifus from https://waifu.im
+// EDIT:  This script has become the homepage. oops
+
+// absence of var, let, const means global e.g x=1 , x is global
 // var globals
 // let scoped
+
+// hey its jquery lite!
+const $ = document;
 
 // see: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+function getRandomElement(array){
+    const randomElement = array[Math.floor(Math.random() * array.length)];
+    return randomElement;
+}
+
+function clearElementById(id) {
+    console.log('Clearing from element: ' + id);
+    document.getElementById(id).innerHTML = "";
+}
+
+function shuffleArray(array){
+    // copied array
+    cArray = array.slice(0);
+    for (let i = cArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cArray[i], cArray[j]] = [cArray[j], cArray[i]];
+    }
+    return cArray;
+}
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
+}
+
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
 }
 
 async function showImageThenDelete(img_src="https://nekos.best/api/v2/shoot/4729a845-d48c-4420-a46f-3afa0b5d6a49.gif", ms=2000) {
@@ -20,7 +49,7 @@ async function showImageThenDelete(img_src="https://nekos.best/api/v2/shoot/4729
     img.alt = 'Sample Image';
     img.id = 'tempImage';
     document.getElementById('image-container').appendChild(img);
-    // Compensating if user mistakes seconds instead
+    // Compensate if user mistakes seconds instead
     if (ms >= 1 && ms <= 10){
         
         ms *= 1000;
@@ -100,18 +129,6 @@ async function setupDeathGame() {
         console.log('tries left = ' + triesLeft);
         let outcome = document.createElement('div');
         
-        //cartridge +='<p>';
-        /*
-        for(i=0;i<maxBullets;i++){
-            cartridge[i] = "";
-        }
-        for(i=0;i<triesLeft;i++){
-            cartridge[i] = "[]";
-        }
-        */
-        // cartridge +='</p>';
-        // bulletsDiv.innerHTML = cartridge;
-        // deathGame.appendChild(bulletsDiv);
         if (gameStarted) {
             // showImageThenDelete('https://media.tenor.com/fklGVnlUSFQAAAAM/russian-roulette.gif');
             
@@ -124,6 +141,7 @@ async function setupDeathGame() {
                 gameStarted = false;
                 await delay(500);
                 await showImageThenDelete();
+                
             }
             // you win 
             else if (!success && triesLeft === 0){
@@ -136,7 +154,8 @@ async function setupDeathGame() {
                 let url = await getNekosImgLink();
                 console.log('url = ' + url);
                 // await showImageThenDelete('https://nekos.best/api/v2/highfive/04825fb0-9e88-47a6-a4a6-0ca476c75101.gif',3);
-                showImageThenDelete(url,6);
+                await showImageThenDelete(url,3);
+                
             }
             // you survived
             else {
@@ -162,52 +181,6 @@ async function setupDeathGame() {
     deathGame.appendChild(tempImageContainer);
     deathGame.appendChild(outcomeDiv);
     
-}
-
-// see: https://xkcd.com/json.html
-async function setupXkcd() {
-    const xkcd_base_url='https://xkcd.com/';
-    const xkcd_latest_url='https://xkcd.com/info.0.json';
-    const xkcd_base_comics_url='https://imgs.xkcd.com/comics';
-    const xkcdDiv = document.getElementById('xkcd');
-    const xkcdImg = document.createElement('img');
-    const xkcdImgInfo = document.createElement('div');
-    const xkcdSearch = document.createElement('a');
-    xkcdSearch.href="https://xkcd-search.typesense.org/";
-    xkcdSearch.textContent="xkcd search";
-    let xkcdNum = 1;
-    let xkcdLatestNum = 3049;
-    // This is how we hack our way around the CORS problem
-    // see: https://www.explainxkcd.com/wiki/index.php/List_of_all_comics_(full)
-    const comics = [
-        "incoming_asteroid",
-        "suspension_bridge",
-        "rotary_tool",
-        "stromatolites",
-        "alphamove",
-        "batman",
-        "git",
-        "sheep",
-        "scientists",
-    ]
-    try {
-        const xkcdResponse = await fetch(xkcd_latest_url);
-        const xkcdResponseJson = await xkcdResponse.json();
-        xkcdImgInfo.innerHTML = `<h2>${xkcdResponseJson.safe_title}</h2> <p>Date:${xkcdResponseJson.month}/${xkcdResponseJson.day}/${xkcdResponseJson.year}</p>`;
-        xkcdNum = xkcdResponseJson.num;
-        xkcdImg.src = xkcdResponseJson.img;
-        xkcdDiv.appendChild(xkcdImgInfo);
-        xkcdDiv.appendChild(xkcdImg);
-    } catch (error){
-        console.log("ERROR: Unable to fetch xkcd: " + error);
-        const selectedComic = getRandomElement(comics);
-        let final_comic_url = xkcd_base_comics_url + '/' + selectedComic + '.png';
-        xkcdImg.src = final_comic_url;
-        xkcdImgInfo.innerHTML = `<h2>xkcd: ${selectedComic}</h2>`;
-        xkcdDiv.appendChild(xkcdImgInfo);
-        xkcdDiv.appendChild(xkcdImg);
-    }
-    xkcdDiv.appendChild(xkcdSearch);
 }
 
 //
@@ -318,55 +291,6 @@ async function setupNekosApi()  {
     });
     nekos.appendChild(button);
     // END nekos button
-
-
-}
-
-// Unique number
-class UniqueRNG {
-    constructor(min, max) {
-      this.numbers = [];
-      for (let i = min; i <= max; i++) {
-        this.numbers.push(i);
-      }
-      this.shuffle(this.numbers);
-    }
-  
-    reset(min, max) {
-      this.numbers = [];
-      for (let i = min; i <= max; i++) {
-        this.numbers.push(i);
-      }
-      this.shuffle(this.numbers);
-      console.log("rng bucket refilled");
-    }
-
-    shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-  
-    draw() {
-      if (this.numbers.length === 0) {
-        // reset
-        this.reset();
-        // throw new Error("No more unique numbers available.");
-      }
-      return this.numbers.pop();
-    }
-}
-// END Unique Number
-
-function shuffleArray(array){
-    // copied array
-    cArray = array.slice(0);
-    for (let i = cArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [cArray[i], cArray[j]] = [cArray[j], cArray[i]];
-    }
-    return cArray;
 }
 
 // START waifu
@@ -395,10 +319,7 @@ const preferences = [
     "kamisato-ayaka"
 ]
 
-function getRandomElement(array){
-    const randomElement = array[Math.floor(Math.random() * array.length)];
-    return randomElement;
-}
+
 
 var scaleFactor = 0.25;
 var included_tags = [];
@@ -408,20 +329,10 @@ var dropdown;
 var var1;
 var url1;
 
-
-
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-  }
-
 function getIncludedTags(){
     console.log('included_tags = ' + included_tags);
 }
 
-function clearElementById(id) {
-    console.log('Clearing from element: ' + id);
-    document.getElementById(id).innerHTML = "";
-}
 
 async function getRandomWaifu() {
     const url = "https://zenquotes.io/api/quotes";
@@ -441,8 +352,7 @@ async function getRandomWaifu() {
         let index = included_tags.indexOf(selectedPreference);
         if (index === -1 ) included_tags.splice(0,1,selectedPreference);
     }
-    
-    
+
     let url_included_tags = "?included_tags=" + included_tags[0];
     let final_url = url_waifuim + url_included_tags;
     var newParagraph;
@@ -583,6 +493,41 @@ const homeQuotes = [
     "welcome.",
 ]
 
+// START interesting-links
+function setupInterestingLinks() {
+    const interestingLinksDiv = document.getElementById('interesting-links');
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Interesting Links';
+    
+
+    const darkPatternsLink = document.createElement('a');
+    darkPatternsLink.href = 'https://www.deceptive.design/';
+    darkPatternsLink.textContent = 'Dark Patterns / Deceptive Design';
+
+    interestingLinksDiv.appendChild(title);
+    interestingLinksDiv.appendChild(darkPatternsLink);
+}
+// END interesting-links
+
+// START TODO
+function setupTodo(){
+    const todoDiv = document.getElementById('todo');
+    const title = document.createElement('h2');
+    title.textContent = 'to do';
+    
+    const todo1 = document.createElement('div');
+    todo1.innerHTML = '<p>*[2/13/25] The javascript file that runs this page is almost 700 lines now and is becoming \
+        unmanageable. Find solution for splitting up the file. <a href=\'https://www.reddit.com/r/learnjavascript/comments/cg935a/comment/eufl1jv/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button\' \
+        >here</a> </p>';
+    
+    
+    todoDiv.appendChild(title);
+    todoDiv.appendChild(todo1);
+    
+}
+// END TODO
+
 // START main
 window.onload = main();
 
@@ -591,7 +536,7 @@ function main() {
     const homeQuote = document.getElementById("home-quote");
     homeQuote.innerHTML = '<h1>HOME</h1>' + `<p>${getRandomElement(homeQuotes)}</p`;
 
-    // add dark mode functionality
+    // Dark mode functionality
     darkModeButton = document.getElementById("dark-mode-toggle");
     darkModeButton.addEventListener("click", () => {
         {
@@ -601,12 +546,15 @@ function main() {
 
     // change background color
     document.getElementById("mybody").classList.add("bg-color");
+    
+    // SEtup todo list
+    setupTodo();
+    // Interesting Links
+    setupInterestingLinks();
 
     //death-game
     setupDeathGame();
 
-    //xkcd
-    setupXkcd();
     // nekos api
     setupNekosApi();
 
