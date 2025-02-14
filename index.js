@@ -47,14 +47,14 @@ var probability = function(n) {
 
 async function setupDeathGame() {
     const deathGame = document.getElementById('death-game');
-    deathGame.innerHTML = '<h2>Russian Roulette</h2><p>Instructions: Press NEW GAME. Then SHOOT. The chamber will be spun and the fates will decide if you live or die. Enter a new probability to change chance [0-1](Russian Roulete ~1/6 or .17):</p>';
+    deathGame.innerHTML = '<h2>Russian Roulette</h2><p>Instructions: Press NEW GAME. Then SHOOT.<br> The chamber will be spun and the fates will decide if you live or die. (Russian Roulette has ~1/6 or .17 of dying):</p>';
     const bulletsDiv = document.createElement('div');
     
     const tempImageContainer = document.createElement('div');
     tempImageContainer.id = 'image-container';
 
     const triesLabel = document.createElement('div');
-    triesLabel.innerHTML = "<p>Attempts to survive (put 100 if you're a mashochist):</p>"
+    triesLabel.innerHTML = "<p>Roundss to survive (put 100 if you're a mashochist):</p>"
     const triesInput = document.createElement('input');
     triesInput.id = 'tries-input';
     triesInput.type = 'number';
@@ -75,12 +75,15 @@ async function setupDeathGame() {
         triesLeft = triesInput.value;
         outcomeDiv.innerHTML = "";
     })
+
+        // tries left
+    const triesLeftCounter =  document.createElement('div');
     
-    const executeProbBtn = document.createElement('button');
-    executeProbBtn.textContent = 'SHOOT';
+    const shootBtn = document.createElement('button');
+    shootBtn.textContent = 'SHOOT';
     
     const outcomeDiv = document.createElement('div');
-    executeProbBtn.addEventListener("click", async function getSuccess() {
+    shootBtn.addEventListener("click", async function getSuccess() {
         
         shuffle(cartridge);
 
@@ -133,7 +136,7 @@ async function setupDeathGame() {
                 let url = await getNekosImgLink();
                 console.log('url = ' + url);
                 // await showImageThenDelete('https://nekos.best/api/v2/highfive/04825fb0-9e88-47a6-a4a6-0ca476c75101.gif',3);
-                showImageThenDelete(url,3);
+                showImageThenDelete(url,6);
             }
             // you survived
             else {
@@ -146,14 +149,16 @@ async function setupDeathGame() {
             outcome.innerHTML = 'Press NEW GAME';
         }
         outcomeDiv.appendChild(outcome);
+        triesLeftCounter.innerHTML = `Rounds to survive: ${triesLeft}`;
     });
     deathGame.appendChild(triesLabel);
     deathGame.appendChild(triesInput);
     
+    deathGame.appendChild(triesLeftCounter);
     
     deathGame.appendChild(startGameBtn);
-    deathGame.appendChild(probInput);
-    deathGame.appendChild(executeProbBtn);
+    // deathGame.appendChild(probInput);
+    deathGame.appendChild(shootBtn);
     deathGame.appendChild(tempImageContainer);
     deathGame.appendChild(outcomeDiv);
     
@@ -184,7 +189,6 @@ async function setupXkcd() {
         "git",
         "sheep",
         "scientists",
-        "hitler"
     ]
     try {
         const xkcdResponse = await fetch(xkcd_latest_url);
