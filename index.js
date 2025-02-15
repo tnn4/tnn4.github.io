@@ -495,8 +495,27 @@ const homeQuotes = [
 
 // START interesting-links
 function setupInterestingLinks() {
-    const interestingLinksDiv = document.getElementById('interesting-links');
+    const appendBr = (_parent) => {
+        const br = $.createElement('br');
+        _parent.appendChild(br);
+    }
+    const createLink = (href, textContent) => {
+        const link = $.createElement('a');
+        link.href = href;
+        link.textContent = textContent;
+        return link;
+    }
+    const createLinkAndAppendTo = (_parentId, href, textContent) => {
+        const link = $.createElement('a');
+        link.href = href;
+        link.textContent = textContent;
+        const parent = $.getElementById(_parentId);
+        parent.appendChild(link);
+    }
     
+    const interestingLinksDiv = document.getElementById('interesting-links');
+    const iDiv = interestingLinksDiv;
+
     const title = document.createElement('h2');
     title.textContent = 'Interesting Links';
     
@@ -507,6 +526,15 @@ function setupInterestingLinks() {
 
     interestingLinksDiv.appendChild(title);
     interestingLinksDiv.appendChild(darkPatternsLink);
+    appendBr(iDiv);
+
+    const tvTropesLink = createLink('https://tvtropes.org', 'tv tropes');
+    iDiv.appendChild(tvTropesLink);
+    appendBr(iDiv);
+    const testLink = createLink('https://example.com', 'reserve site by iana used for documentation');
+    iDiv.appendChild(testLink);
+    appendBr(iDiv);
+    createLinkAndAppendTo(iDiv, 'https://example.com', 'example')
 }
 // END interesting-links
 
