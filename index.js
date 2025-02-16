@@ -237,7 +237,7 @@ async function setupNekosApi()  {
         console.log('Fetched from ' + nekos_base_url + `/endpoints`);
         const endpointsJson = await endpointsResponse.json();
         console.log(endpointsJson);
-        // Length is underined because the json is not an array 
+        // Length is undefined because the json is not an array 
         // Misconception: I thought the number of fields would give you the 'length'
         console.log('endpointsJson.length = '+ endpointsJson.length);
         Object.keys(endpointsJson).forEach( field => {
@@ -333,14 +333,149 @@ function getIncludedTags(){
     console.log('included_tags = ' + included_tags);
 }
 
+/**
+ * 
+ * Sets up frontend to interface with waifu im API
+ * 
+ * replaces setupWaifuImOld() b/c the function is more concise \
+ * due to use of function expressions and closures
+ * @returns 
+ */
+async function setupWaifuIm(){
+    const waifuImDiv = $.getElementById('waifu-im');
+    
+    // get tags
+    const getTags = async () => {
+        const tagsUrl='https://api.waifu.im/tags';
+        const response = await fetch(tagsUrl);
+        const json = await response.json();
+        return json;
+    }
 
-async function getRandomWaifu() {
+    let newOption;
+    const createDropDownMenuFromTags = ( async () => {
+        const waifuImDiv = $.getElementById('waifu-im');
+        // ddmenu = drop down menu
+        const ddMenu = $.createElement('select');
+        ddMenu.id = 'waifu-im-drop-down-menu';
+        // get tags from api
+        const tagsJson = await getTags();
+        const tagsList = tagsJson.versatile;
+
+        tagsList.forEach( (tag) => {
+            newOption = $.createElement('option');
+            newOption.value = tag;
+            newOption.text = tag
+            ddMenu.add(newOption);
+        });
+
+        waifuImDiv.appendChild(ddMenu);
+
+    })(); // <-- Immediately Invoked Function expression runs right away so you don't have to call it later, cool
+
+    const createDDButton = ( () => {
+        // create button
+        const ddBtn = $.createElement('button');
+        ddBtn.textContent = 'Give me waifu';
+        ddBtn.addEventListener( 'click', async ()=> {
+            const waifuImUrl = 'https://api.waifu.im/search';
+            const selectedValue = $.querySelector('#waifu-im-drop-down-menu').value;
+            console.log('[waifu-im] selected tag = ' + selectedValue);
+            // use default value if we can't find any
+            if (selectedValue == null || selectedValue === ""){
+                selectedValue = "versatile";
+            }
+            const waifuImFinalUrl = waifuImUrl + `?included_tags=${selectedValue}`;
+            // fetch from url
+            console.log(`[waifu-im] attempting to fetch from ${waifuImFinalUrl}`);
+            const resp = await fetch(waifuImFinalUrl);
+            const respJson = await resp.json();
+            const jsonStrPretty = JSON.stringify(respJson,null,2);
+            console.log(`[waifu-im] JSON ${jsonStrPretty}`);
+            const json = respJson;
+            if (Array.isArray(respJson.images)) {
+                // e === element
+                respJson.images.forEach( async (e) => {
+                    
+                    // extract the image url
+                    const imgUrl = e.url;
+                    console.log(`[waifu-im] imgUrl = ${imgUrl}`);
+                    // create the img element
+                    const img = $.createElement('img');
+                    img.src = imgUrl;
+                    img.alt = 'supposed to be a waifu here';
+                    // add it to the page
+                    waifuImDiv.appendChild(img);
+
+                    const createArtistCredits = (() => {
+                        const artistCreditsDiv = $.createElement('div');
+                        if (e.artist == null){
+                            console.warn('[waifu-im] Artist data missing from response');
+                        } else {
+                            let artist_id = '';
+                            let deviant_art = '';
+                            let name = '';
+                            let patreon = '';
+                            let pixiv = '';
+                            let twitter = '';
+                            const a = e.artist;
+                            if (e.artist.artist_id != null){
+                                artist_id = a.artist_id;
+                            }
+                            if (e.artist.deviant_art != null){
+                                deviant_art = a.deviant_art;
+                            }
+                            if (e.artist.name != null){
+                                name = a.name;
+                            }
+                            if (e.artist.patreon != null){
+                                patreon = a.patreon;
+                            }
+                            if (e.artist.pixiv != null){
+                                pixiv = a.pixiv;
+                            }
+                            if (e.artist.twitter != null){
+                                twitter = a.twitter;
+                            }
+                            artistCreditsDiv.innerHTML = `<p>Name: ${name} <br>
+                            Deviant Art: ${deviant_art} <br> 
+                            Patreon: ${patreon} <br> 
+                            Pixiv: ${pixiv}<br>
+                            Twitter: ${twitter}<br>
+                            </p>` 
+                            waifuImDiv.appendChild(artistCreditsDiv);
+                        }
+                    })();
+                });
+
+
+
+            } else {
+                console.error(`[waifu-im] respJson not array`);
+            }
+
+        });
+        waifuImDiv.appendChild(ddBtn);
+    })();
+
+
+}
+
+/**
+ * Deprecated: replaced with setupWaifuIm
+ * Sets up frontend to interface with waifu im API
+ * @returns 
+ */
+async function getWaifuImOld() {
     const url = "https://zenquotes.io/api/quotes";
     // see: https://docs.waifu.im/quick-start
     // Here is an example to get a random image with  maid tags:
     // Set up a url builder for this
     const url_waifuim = "https://api.waifu.im/search";
     
+
+    const url_getSfw = 'https://api.waifu.im/search?include_tags=versatile';
+
     dropdown = document.getElementById("dropdownMenuForTag");
     if (dropdown.value === "random"){
         let selectedPreference = getRandomElement(preferences);
@@ -584,6 +719,10 @@ function main() {
 
     // nekos api
     setupNekosApi();
+
+    // setup WaifuIm
+
+    setupWaifuIm();
 
     // Get preference for waifu
     dropdown = document.getElementById("dropdownMenuForTag");
