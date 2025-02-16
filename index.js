@@ -505,12 +505,11 @@ function setupInterestingLinks() {
         link.textContent = textContent;
         return link;
     }
-    const createLinkAndAppendTo = (_parentId, href, textContent) => {
+    const createLinkAndAppendTo = (_parent, href, textContent) => {
         const link = $.createElement('a');
         link.href = href;
         link.textContent = textContent;
-        const parent = $.getElementById(_parentId);
-        parent.appendChild(link);
+        _parent.appendChild(link);
     }
     
     const interestingLinksDiv = document.getElementById('interesting-links');
