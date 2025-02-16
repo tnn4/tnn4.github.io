@@ -654,6 +654,7 @@ function setupInterestingLinks() {
     title.textContent = 'Interesting Links';
     
 
+    // Turn this list into a dictionary url, label
     const darkPatternsLink = document.createElement('a');
     darkPatternsLink.href = 'https://www.deceptive.design/';
     darkPatternsLink.textContent = 'Dark Patterns / Deceptive Design';
@@ -671,6 +672,60 @@ function setupInterestingLinks() {
     createLinkAndAppendTo(iDiv, 'https://example.com', 'example')
 }
 // END interesting-links
+
+const setupNineRealms =(() => {
+    
+class Realm {
+    constructor(name, desc){
+        this.name = name;
+        this.desc = desc;
+    }
+    describe() {
+        return `<h3>${this.name}</h3> ${this.desc}`
+    }
+}
+
+class Monster {
+    constructor(name, desc){
+        this.name = name;
+        this.desc = desc;
+    }
+    describe() {
+        return `${this.name} ${this.desc}`
+    }
+}
+
+const cosmos = new Realm('cosmos', 'the realm between realms, the tree of life Ygdrassil is located here, you must go through here everytime you travel between the realms')
+const midgard = new Realm('midgard', 'The world of humans. I come from here.');
+const jotunheim = new Realm('jotunheim', 'The world of giants. Try not to get stepped on.');
+const muspelheim = new Realm('muspelheim', 'The world of fire giants. It\'s really hot.');
+const nidavellir = new Realm('nidavellir', 'The world of dwarves. Greate place to find Short stout grubby little miners hunting for gold');
+const alfheim = new Realm('alfheim', 'The world of light elves. They look elegant but they\'re also pricks.');
+const niflheim = new Realm('niflheim', 'They\'re not as elegant as their lighter cousins and they\'re pricks too.');
+const asgard = new Realm('midgard', 'The world of asgardians. Odin and THor live here. They\'re pricks too.');
+const vanaheim = new Realm('vanaheim', 'The world of vanir. If gods could be hippies, this is it. They\'re ok.');
+const helheim = new Realm('helheim', 'The realm of the dishonored dead. I don\'t see dying in your sleep or in peace as dishonorable. The norse are savages imo.');
+
+const nineRealms = [
+    cosmos,
+    midgard,
+    jotunheim,
+    muspelheim,
+    nidavellir,
+    alfheim,
+    helheim,
+    niflheim,
+    asgard,
+    vanaheim,
+];
+    const nineRealmsDiv = $.getElementById('nine-realms');
+    nineRealms.forEach( (e) =>  {
+        const div = $.createElement('div');
+        div.innerHTML = `${e.describe()}`;
+        nineRealmsDiv.appendChild(div);
+    })
+})();
+
 
 // START TODO
 function setupTodo(){
