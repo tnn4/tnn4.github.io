@@ -673,6 +673,61 @@ function setupInterestingLinks() {
 }
 // END interesting-links
 
+const setupScene = () => {
+    class Scene {
+        constructor(id, desc, adjacentScenes){
+            this.id = id;
+            this.desc = desc;
+            this.adjacentScenes = adjacentScenes;
+        }
+        getId(){
+            return this.id;
+        }
+        getDesc(){
+            return this.desc;
+        }
+        getAdjacentScenes(){
+            return this.adjacentScenes;
+        }
+        describe(){
+            return `<h3>${this.id}</h3> ${this.desc}`;
+        }
+    }
+
+    const ironswornLocations = [
+        'barrier islands',
+        'ragged coast',
+        'deep wilds',
+        'flooded lands',
+        'havens',
+        'hinterlands',
+        'tempest hills',
+        'veiled mountains',
+        'shattered wastes'
+    ];
+    
+    // [0]=current [1..n] = adjacent
+    const ironSwornMap = [
+            [0,1],
+            [1,0,2,5,6],
+            [2,1,4,5],
+            [3,0,4],
+            [4,1,3,5],
+            [5,2,4,6],
+            [6,5,7],
+            [7,6,8],
+            [8,7],
+    ];
+    ironSwornMap.forEach((location)=>{
+        const currentLocation = location[0];
+        let adjacentLocations = [];
+        for(let i=0; i< location.length-1; i++){
+            adjacentLocations.push(location[i]);
+        }
+        console.log(`${adjacentLocations}`);
+    })
+}
+
 const setupNineRealms =(() => {
     
 class Realm {
@@ -681,7 +736,7 @@ class Realm {
         this.desc = desc;
     }
     describe() {
-        return `<h3>${this.name}</h3> ${this.desc}`
+        return `<h3>${this.name}</h3> ${this.desc}`;
     }
 }
 
@@ -706,6 +761,10 @@ const asgard = new Realm('midgard', 'The world of asgardians. Odin and THor live
 const vanaheim = new Realm('vanaheim', 'The world of vanir. If gods could be hippies, this is it. They\'re ok.');
 const helheim = new Realm('helheim', 'The realm of the dishonored dead. I don\'t see dying in your sleep or in peace as dishonorable. The norse are savages imo.');
 
+const jormungandr = new Monster('jormungandr', 'World serpent so big he reaches around Midgard');
+const fenrir = new Monster('fenrir', 'he\'s a wolf');
+const squirrel = new Monster('squirrel', 'his real name is ratatoskir or something but I\'m not typing that out');
+
 const nineRealms = [
     cosmos,
     midgard,
@@ -724,7 +783,7 @@ const nineRealms = [
         div.innerHTML = `${e.describe()}`;
         nineRealmsDiv.appendChild(div);
     })
-})();
+})
 
 
 // START TODO
