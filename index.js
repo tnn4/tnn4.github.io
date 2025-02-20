@@ -11,6 +11,12 @@ const $ = document;
 // see: https://stackoverflow.com/questions/14226803/wait-5-seconds-before-executing-next-line
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+function delay2(milliseconds){
+    return new Promise(resolve => {
+        setTimeout(resolve, milliseconds);
+    });
+}
+
 function getRandomElement(array){
     const randomElement = array[Math.floor(Math.random() * array.length)];
     return randomElement;
@@ -730,59 +736,69 @@ const setupScene = () => {
 
 const setupNineRealms =(() => {
     
-class Realm {
-    constructor(name, desc){
-        this.name = name;
-        this.desc = desc;
+    class Realm {
+        constructor(name, desc){
+            this.name = name;
+            this.desc = desc;
+        }
+        describe() {
+            return `<h3>${this.name}</h3> ${this.desc}`;
+        }
     }
-    describe() {
-        return `<h3>${this.name}</h3> ${this.desc}`;
+
+    class Monster {
+        constructor(name, desc){
+            this.name = name;
+            this.desc = desc;
+        }
+        describe() {
+            return `${this.name} ${this.desc}`
+        }
     }
-}
 
-class Monster {
-    constructor(name, desc){
-        this.name = name;
-        this.desc = desc;
-    }
-    describe() {
-        return `${this.name} ${this.desc}`
-    }
-}
+    const cosmos = new Realm('cosmos', 'the realm between realms, the tree of life Ygdrassil is located here, you must go through here everytime you travel between the realms')
+    const midgard = new Realm('midgard', 'The world of humans. I come from here.');
+    const jotunheim = new Realm('jotunheim', 'The world of giants. Try not to get stepped on.');
+    const muspelheim = new Realm('muspelheim', 'The world of fire giants. It\'s really hot.');
+    const nidavellir = new Realm('nidavellir', 'The world of dwarves. Greate place to find Short stout grubby little miners hunting for gold');
+    const alfheim = new Realm('alfheim', 'The world of light elves. You ever heard of light elf privilege. No? THey get treated better than dark elves that\'s for sure.');
+    const niflheim = new Realm('niflheim', 'YOu ever live in the hood and get mistreated because the color of your skin. THey don\'t like the other realms for good reason.');
+    const asgard = new Realm('midgard', 'The world of asgardians. Odin and THor live here. They\'re pricks too.');
+    const vanaheim = new Realm('vanaheim', 'The world of vanir. If gods could be hippies, this is it. They\'re ok.');
+    const helheim = new Realm('helheim', 'The realm of the dishonored dead. I don\'t see dying in your sleep or in peace as dishonorable. The norse are savages imo.');
 
-const cosmos = new Realm('cosmos', 'the realm between realms, the tree of life Ygdrassil is located here, you must go through here everytime you travel between the realms')
-const midgard = new Realm('midgard', 'The world of humans. I come from here.');
-const jotunheim = new Realm('jotunheim', 'The world of giants. Try not to get stepped on.');
-const muspelheim = new Realm('muspelheim', 'The world of fire giants. It\'s really hot.');
-const nidavellir = new Realm('nidavellir', 'The world of dwarves. Greate place to find Short stout grubby little miners hunting for gold');
-const alfheim = new Realm('alfheim', 'The world of light elves. They look elegant but they\'re also pricks.');
-const niflheim = new Realm('niflheim', 'They\'re not as elegant as their lighter cousins and they\'re pricks too.');
-const asgard = new Realm('midgard', 'The world of asgardians. Odin and THor live here. They\'re pricks too.');
-const vanaheim = new Realm('vanaheim', 'The world of vanir. If gods could be hippies, this is it. They\'re ok.');
-const helheim = new Realm('helheim', 'The realm of the dishonored dead. I don\'t see dying in your sleep or in peace as dishonorable. The norse are savages imo.');
+    const jormungandr = new Monster('jormungandr', 'World serpent so big he reaches around Midgard');
+    const fenrir = new Monster('fenrir', 'he\'s a wolf');
+    const squirrel = new Monster('squirrel', 'his real name is ratatoskir or something but I\'m not typing that out');
 
-const jormungandr = new Monster('jormungandr', 'World serpent so big he reaches around Midgard');
-const fenrir = new Monster('fenrir', 'he\'s a wolf');
-const squirrel = new Monster('squirrel', 'his real name is ratatoskir or something but I\'m not typing that out');
-
-const nineRealms = [
-    cosmos,
-    midgard,
-    jotunheim,
-    muspelheim,
-    nidavellir,
-    alfheim,
-    helheim,
-    niflheim,
-    asgard,
-    vanaheim,
-];
+    const nineRealms = [
+        cosmos,
+        midgard,
+        jotunheim,
+        muspelheim,
+        nidavellir,
+        alfheim,
+        helheim,
+        niflheim,
+        asgard,
+        vanaheim,
+    ];
     const nineRealmsDiv = $.getElementById('nine-realms');
+    const div = $.createElement('div');
+    const btnDiv = $.createElement('div');
     nineRealms.forEach( (e) =>  {
-        const div = $.createElement('div');
-        div.innerHTML = `${e.describe()}`;
-        nineRealmsDiv.appendChild(div);
-    })
+        
+        // div.innerHTML = `${e.describe()}`;
+        // 
+        const btn = $.createElement('button');
+        btn.textContent = `Go to ${e.name}`;
+        btn.addEventListener('click', () => {
+            div.innerHTML = `<h2>${e.name}</h2> ${e.desc}`;
+        });
+        btnDiv.appendChild(btn);
+    });
+    nineRealmsDiv.appendChild(div);
+    nineRealmsDiv.appendChild(btnDiv);
 })
 
 
@@ -823,6 +839,7 @@ function main() {
     // change background color
     document.getElementById("mybody").classList.add("bg-color");
     
+    setupNineRealms();
     // SEtup todo list
     setupTodo();
     // Interesting Links
