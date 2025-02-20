@@ -762,7 +762,7 @@ const setupNineRealms =(() => {
     const muspelheim = new Realm('muspelheim', 'The world of fire giants. It\'s really hot.');
     const nidavellir = new Realm('nidavellir', 'The world of dwarves. Greate place to find Short stout grubby little miners hunting for gold');
     const alfheim = new Realm('alfheim', 'The world of light elves. You ever heard of light elf privilege. No? THey get treated better than dark elves that\'s for sure.');
-    const niflheim = new Realm('niflheim', 'YOu ever live in the hood and get mistreated because the color of your skin. THey don\'t like the other realms for good reason.');
+    const svartalfheim = new Realm('svartalfheim', 'YOu ever live in the hood and get mistreated because the color of your skin. THey don\'t like the other realms for good reason.');
     const asgard = new Realm('asgard', 'The world of asgardians. Odin and THor live here. They\'re pricks too.');
     const vanaheim = new Realm('vanaheim', 'The world of vanir. If gods could be hippies, this is it. They\'re ok.');
     const helheim = new Realm('helheim', 'The realm of the dishonored dead. I don\'t see dying in your sleep or in peace as dishonorable. The norse are savages imo.');
@@ -779,7 +779,7 @@ const setupNineRealms =(() => {
         [ 'nidavellir','https://cf.geekdo-images.com/PX7t5xXDLI2XqxoTShLayg__itemrep/img/-2DjDG1x3IfG1mAu-xACSDSfWfw=/fit-in/246x300/filters:strip_icc()/pic5039625.jpg'],
         [ 'alfheim', 'https://blog.vkngjewelry.com/wp-content/uploads/2020/02/Norse-Mythology_-Alfheim.png'],
         [ 'helheim', 'https://images.squarespace-cdn.com/content/v1/56c8a28f7c65e44270c2e4a4/1540491641015-UX86RBS0H0RRQ2G1PP5R/James_Firnhaber_Helheim.jpg?format=500w'],
-        [ 'niflheim','https://blog.vkngjewelry.com/wp-content/uploads/2020/06/The-Norse-Cosmos_-Niflheim-768x432.png'],
+        [ 'svartalflheim','https://blog.vkngjewelry.com/wp-content/uploads/2020/06/The-Norse-Cosmos_-Niflheim-768x432.png'],
         [ 'asgard', 'https://pbs.twimg.com/media/FoJQGSnXEAA0SuK?format=jpg&name=4096x4096'],
         [ 'vanaheim' ,'https://i.pinimg.com/736x/37/25/c2/3725c2a45a3c845ee3c7102704b0360c.jpg'],
     ]
@@ -792,7 +792,7 @@ const setupNineRealms =(() => {
         nidavellir,
         alfheim,
         helheim,
-        niflheim,
+        svartalfheim,
         asgard,
         vanaheim,
     ];
