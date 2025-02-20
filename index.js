@@ -851,6 +851,13 @@ function setupTodo(){
 }
 // END TODO
 
+function setUpProjectLinks(){
+    const projectDiv = $.getElementById('project-links');
+    let a = $.createElement('a');
+    a.href='./canvas/index.html';
+    projectDiv.appendChild(a);
+}
+
 // START main
 window.onload = main();
 
@@ -875,7 +882,7 @@ function main() {
     setupTodo();
     // Interesting Links
     setupInterestingLinks();
-
+    setUpProjectLinks();
     //death-game
     setupDeathGame();
 
