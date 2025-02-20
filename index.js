@@ -763,13 +763,26 @@ const setupNineRealms =(() => {
     const nidavellir = new Realm('nidavellir', 'The world of dwarves. Greate place to find Short stout grubby little miners hunting for gold');
     const alfheim = new Realm('alfheim', 'The world of light elves. You ever heard of light elf privilege. No? THey get treated better than dark elves that\'s for sure.');
     const niflheim = new Realm('niflheim', 'YOu ever live in the hood and get mistreated because the color of your skin. THey don\'t like the other realms for good reason.');
-    const asgard = new Realm('midgard', 'The world of asgardians. Odin and THor live here. They\'re pricks too.');
+    const asgard = new Realm('asgard', 'The world of asgardians. Odin and THor live here. They\'re pricks too.');
     const vanaheim = new Realm('vanaheim', 'The world of vanir. If gods could be hippies, this is it. They\'re ok.');
     const helheim = new Realm('helheim', 'The realm of the dishonored dead. I don\'t see dying in your sleep or in peace as dishonorable. The norse are savages imo.');
 
     const jormungandr = new Monster('jormungandr', 'World serpent so big he reaches around Midgard');
     const fenrir = new Monster('fenrir', 'he\'s a wolf');
     const squirrel = new Monster('squirrel', 'his real name is ratatoskir or something but I\'m not typing that out');
+
+    const realmImgMap = [
+        [ 'cosmos', 'https://images.squarespace-cdn.com/content/v1/56c8a28f7c65e44270c2e4a4/1534536029343-82O5401X5540ED8Q4CE0/James_Firnhaber_9_from_The_Nine_Worlds+copy.jpg?format=500w'],
+        [ 'midgard', 'https://thumbs.dreamstime.com/b/earth-blue-planet-space-5803790.jpg'],
+        [ 'jotunheim', 'https://images.squarespace-cdn.com/content/v1/56c8a28f7c65e44270c2e4a4/1540491603136-J77YLGKUPMTHP5OUGZ59/James_Firnhaber_Jotunheim.jpg?format=500w'],
+        [ 'muspelheim','https://images.squarespace-cdn.com/content/v1/56c8a28f7c65e44270c2e4a4/1540491362879-US93S2SIW3J05KKEF29P/James_Firnhaber_Muspellheim.jpg?format=500w'],
+        [ 'nidavellir','https://cf.geekdo-images.com/PX7t5xXDLI2XqxoTShLayg__itemrep/img/-2DjDG1x3IfG1mAu-xACSDSfWfw=/fit-in/246x300/filters:strip_icc()/pic5039625.jpg'],
+        [ 'alfheim', 'https://blog.vkngjewelry.com/wp-content/uploads/2020/02/Norse-Mythology_-Alfheim.png'],
+        [ 'helheim', 'https://images.squarespace-cdn.com/content/v1/56c8a28f7c65e44270c2e4a4/1540491641015-UX86RBS0H0RRQ2G1PP5R/James_Firnhaber_Helheim.jpg?format=500w'],
+        [ 'niflheim','https://blog.vkngjewelry.com/wp-content/uploads/2020/06/The-Norse-Cosmos_-Niflheim-768x432.png'],
+        [ 'asgard', 'https://pbs.twimg.com/media/FoJQGSnXEAA0SuK?format=jpg&name=4096x4096'],
+        [ 'vanaheim' ,'https://i.pinimg.com/736x/37/25/c2/3725c2a45a3c845ee3c7102704b0360c.jpg'],
+    ]
 
     const nineRealms = [
         cosmos,
@@ -783,7 +796,19 @@ const setupNineRealms =(() => {
         asgard,
         vanaheim,
     ];
+
+
+
+
     const nineRealmsDiv = $.getElementById('nine-realms');
+
+    // IMAGE
+    let img = $.createElement('img');
+    img.src = 'https://images.squarespace-cdn.com/content/v1/56c8a28f7c65e44270c2e4a4/1534536029343-82O5401X5540ED8Q4CE0/James_Firnhaber_9_from_The_Nine_Worlds+copy.jpg?format=500w';
+    img.alt = 'Realm';
+    nineRealmsDiv.appendChild(img);
+    
+
     const div = $.createElement('div');
     const btnDiv = $.createElement('div');
     nineRealms.forEach( (e) =>  {
@@ -793,12 +818,18 @@ const setupNineRealms =(() => {
         const btn = $.createElement('button');
         btn.textContent = `Go to ${e.name}`;
         btn.addEventListener('click', () => {
+            for (let i=0; i < realmImgMap.length; i++){
+                if (e.name === realmImgMap[i][0]){
+                    img.src = realmImgMap[i][1];
+                }
+            }
             div.innerHTML = `<h2>${e.name}</h2> ${e.desc}`;
         });
         btnDiv.appendChild(btn);
     });
     nineRealmsDiv.appendChild(div);
     nineRealmsDiv.appendChild(btnDiv);
+    console.log('[9 realms]: DONE');
 })
 
 
