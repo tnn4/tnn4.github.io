@@ -273,8 +273,8 @@ const ctx = canvas.getContext('2d');
 const originX = canvas.width/2;
 const originY = canvas.height/2;
 
-//const spriteSheet = new Image();
-//spriteSheet.src = './superintendent.png'; // Update with your spritesheet path
+const spriteSheet = new Image();
+spriteSheet.src = './superintendent.png'; // Update with your spritesheet path
 
 const spriteWidth = 32; // Width of a single sprite frame
 const spriteHeight = 32; // Height of a single sprite frame
