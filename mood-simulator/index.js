@@ -122,8 +122,8 @@ const generateThought = () => {
     console.log(`[thoughts] happy%: ${happyChance}, fear%: ${fearChance}, angry%: ${angryChance}, sad%: ${sadChance}`);
     if(probability(happyChance)){
         console.log('[THOUGHT GENERATED]: :)');
-        mood += getRandomArbitrary(0.3,0.5);
-        arousal += getRandomArbitrary(0.3,0.5);;
+        mood += getRandomArbitrary(0.5,0.7);
+        arousal += getRandomArbitrary(0.5,0.7);;
         console.log(`arousal: ${arousal} mood: ${mood}`);
         return ':)';
     } 
@@ -144,7 +144,7 @@ const generateThought = () => {
     if(probability(sadChance)){
         console.log('[THOUGHT GENERATED]: :(');
         mood -= getRandomArbitrary(0.3,0.5);
-        arousal += getRandomArbitrary(0.3,0.5);
+        arousal -= getRandomArbitrary(0.5,0.7);
         console.log(`arousal: ${arousal} mood: ${mood}`);
         return ':C';
     }
@@ -231,7 +231,7 @@ const changeEmotion = () => {
     */
 }
 
-setInterval(changeEmotion, 4000);
+setInterval(changeEmotion, 2000);
 
 const pi = Math.PI;
 
