@@ -1,5 +1,13 @@
 $ = document;
 let debug = false;
+
+const setupTitle = () =>{
+    const title = $.createElement('div');
+    title.innerHTML = '<h1>Mood Simulator</h1>'
+    $.body.appendChild(title);
+}
+setupTitle();
+
 const setupDebugBtn = () => {
     const btn = $.createElement('button');
     btn.textContent = 'debug';
@@ -287,10 +295,15 @@ const emotionTime = {
 
         
         console.log(`N: ${nCent} ,${aCent}%,S: ${sCent}%,B: ${bCent}%,C: ${cCent}%, H:${hCent}%, `);
-        let text = `% time in Mood: o_o = ${nCent}% // :) = ${hCent}% // >< = ${aCent}% // :c = ${sCent}% // -_- = ${bCent}% //o_0 = ${cCent}%`;
+        let text = `% time in Mood:\no_o = ${nCent}%\n: ) = ${hCent}%\n> < = ${aCent}%\n: c = ${sCent}%\n-_- = ${bCent}%\no_0 = ${cCent}%\n`;
         ctx.fillStyle = 'black';
-        ctx.font = '12px arial';
-        ctx.fillText(text, originX-8*unit, originY+5*unit);
+        ctx.font = '16px courier';
+        const lines = text.split('\n')
+        const lineheight = 15;
+        for (let i=0; i<lines.length;i++){
+            ctx.fillText(lines[i], originX-8*unit, originY+(i*lineheight));
+        }
+        
     }
 }
 
@@ -383,7 +396,7 @@ const unit =32;
 
 const talk = (emotion) => {
 
-    ctx.font = "48px arial";
+    ctx.font = "48px courier";
     ctx.fillStyle = "black"
  
     ctx.fillText(text, originX - unit, originY + 5*unit);
@@ -639,14 +652,22 @@ function update(timestamp) {
     draw();
     // draw text
     ctx.fillStyle = 'black';
-    ctx.font = '12px arial';
+    ctx.font = '12px courier';
     let formattedMood = mood.toPrecision(3);
-    let formattedArousal = arousal.toPrecision(3);   
-    ctx.fillText(`mood: ${formattedMood}/ stimulation_level:${formattedArousal}`, originX, originY - 5*unit );
+    let formattedArousal = arousal.toPrecision(3);
+    let line = `mood: ${formattedMood}\nstimulation_level: ${formattedArousal}`
+    let lines = line.split('\n');
+    const lineheight = 15;
+    for(let i=0; i< lines.length; i++){
+        ctx.fillText( lines[i], originX+5*unit, originY + (i*lineheight));
+    }
+    
     // END draw text
     emotionTime.printEmotionPercentage();
 }
-
+setInterval( function clearText(){
+    text = ''
+}, 4000);
 
 spriteSheet.onload = () => {
     requestAnimationFrame(update);
