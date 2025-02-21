@@ -1,6 +1,48 @@
 $ = document;
+let debug = false;
+const setupDebugBtn = () => {
+    const btn = $.createElement('button');
+    btn.textContent = 'debug';
+    btn.addEventListener('click', () => {
+        console.log(`debug: ${debug}`);
+        debug = !debug;
+    })
+    $.body.appendChild(btn);
+}
+setupDebugBtn();
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution! \
+ * see: https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
+ */
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-
+const probabilityLessThanOrEqual = function(n) {
+    return !!n && Math.random() <= n;
+};
+/**
+ * Checks if a value is between smaller( min) and greater( max) \
+ * If min > max the function will throw an error
+ * e.g. valueIsBetween(2,3,4) >> false
+ * valueIsBetween(3.5,3,4) >> true
+ * @param {*} value - value to check
+ * @param {*} min - smaller value
+ * @param {*} max - bigger value
+ * @returns boolean true if value is between min and max
+ */
+const valueIsBetween = (value, min,max) =>{
+    if (min > max){
+        throw new error("min must be smaller than max")
+    }
+    return value >= min && value < max
+}
 
 let currentEmotion = 'neutral';
 
@@ -35,7 +77,7 @@ const environment = {
     // noise pollution
     noisy:false,
     // social media use
-    socialMediaUse: false,
+    usingSocialMedia: false,
     // bad weather >> SAD
     badWeather: false, 
 }
@@ -49,28 +91,32 @@ const changeEnvironment = () => {
     if(probability(0.5)){
         environment.noisy = !environment.noisy;
     }
-    if(environment.socialMediaUse === false){
+    if(environment.usingSocialMedia === false){
         if(probability(0.8)){
-            environment.socialMediaUse = true;
+            environment.usingSocialMedia = true;
         } 
     } else {
         if(probability(0.3)){
-            environment.socialMediaUse = false;
+            environment.usingSocialMedia = false;
         }
     }
     if(probability(0.3)){
         environment.badWeather = !environment.badWeather;
     }
-    console.log(`[Environment]: noisy? ${environment.noisy}, social media? ${environment.socialMediaUse}, bad weather? ${environment.badWeather} `)
+    if (debug) {
+        console.log(`[Environment]: noisy? ${environment.noisy}, social media? ${environment.usingSocialMedia}, bad weather? ${environment.badWeather} `);
+    }
+    
 }
-setInterval(changeEnvironment, 5000);
+setInterval(changeEnvironment, 4000);
 
 
 // Returns a random number between min (inclusive) and max (exclusive)
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
-  
+
+let thought;
 const generateThought = () => {
     let probability = function(n) {
         return !!n && Math.random() <= n;
@@ -92,7 +138,7 @@ const generateThought = () => {
     } else {
         NOISE_MODIFIER = 1;
     }
-    if (environment.socialMediaUse === true){
+    if (environment.usingSocialMedia === true){
         SOCIAL_MEDIA_MODIFIER = 1.5;
     } else {
         SOCIAL_MEDIA_MODIFIER = 1;
@@ -105,56 +151,74 @@ const generateThought = () => {
 
     happyChance = 0.4 * 1/NOISE_MODIFIER * 1/SOCIAL_MEDIA_MODIFIER * 1/BAD_WEATHER_MODIFIER;
     fearChance = 0.3 * NOISE_MODIFIER * SOCIAL_MEDIA_MODIFIER * BAD_WEATHER_MODIFIER;
-    angryChance = 0.3 * NOISE_MODIFIER * SOCIAL_MEDIA_MODIFIER * BAD_WEATHER_MODIFIER;
-    sadChance = 0.3 * NOISE_MODIFIER * SOCIAL_MEDIA_MODIFIER * BAD_WEATHER_MODIFIER;
-    if(mood < -3){
-        mood = -3;
+    angryChance = 0.2 * NOISE_MODIFIER * SOCIAL_MEDIA_MODIFIER * BAD_WEATHER_MODIFIER;
+    sadChance = 0.1 * NOISE_MODIFIER * SOCIAL_MEDIA_MODIFIER * BAD_WEATHER_MODIFIER;
+    // split
+    // bucket = 100
+    // bucket * happyProb  >> 40 length
+    // bucket * fearProb >> 30
+    // bucket * angryProb >> 20
+    // bucket * sadProb >> 10
+
+    const capMoodAndArousal = () => {
+        if(mood <= -3){
+            mood = -3;
+        }
+        if(mood >= 3){
+            mood = 3;
+        }
+        if(arousal >= 3){
+            arousal = 3;
+        }
+        if(arousal < 0){
+            arousal = 0;
+        }
     }
-    if(mood > 3){
-        mood = 3;
+    capMoodAndArousal();
+    if(debug){
+        console.log(`[thoughts] happy%: ${happyChance}, fear%: ${fearChance}, angry%: ${angryChance}, sad%: ${sadChance}`);
     }
-    if(arousal > 3){
-        arousal = 3;
-    }
-    if(arousal < 0){
-        arousal = 0;
-    }
-    console.log(`[thoughts] happy%: ${happyChance}, fear%: ${fearChance}, angry%: ${angryChance}, sad%: ${sadChance}`);
-    if(probability(happyChance)){
-        console.log('[THOUGHT GENERATED]: :)');
+    
+    let selectedNum = Math.random();
+    // replace with math(random)
+    if(valueIsBetween(selectedNum, 0, 0.4)){
+
         mood += getRandomArbitrary(0.5,0.7);
-        arousal += getRandomArbitrary(0.5,0.7);;
-        console.log(`arousal: ${arousal} mood: ${mood}`);
-        return ':)';
+        arousal += getRandomArbitrary(0.2,0.3);
+
+        thought = ':)';
     } 
-    if(probability(fearChance)){
-        console.log('[THOUGHT GENERATED]: O_O');
-        mood -= getRandomArbitrary(0.3,0.5);
-        arousal += getRandomArbitrary(0.3,0.5);
-        console.log(`arousal: ${arousal} mood: ${mood}`);
-        return 'O_O'
+    if(valueIsBetween(selectedNum, 0.4, 0.6)){
+        
+        mood -= getRandomArbitrary(0.3,0.4);
+        arousal += getRandomArbitrary(0.1,0.2);
+        thought = 'O_O';
     }
-    if(probability(angryChance)){
-        console.log('[THOUGHT GENERATED]: >:(');
-        mood -= getRandomArbitrary(0.3,0.5);
-        arousal += getRandomArbitrary(0.3,0.5);
-        console.log(`arousal: ${arousal} mood: ${mood}`);
-        return '>:(';
+    if(valueIsBetween(selectedNum, 0.6, 0.8)){
+        
+        mood -= getRandomArbitrary(0.3,0.4);
+        arousal += getRandomArbitrary(0.1,0.2);
+        
+        thought = '>:(';
     }
-    if(probability(sadChance)){
-        console.log('[THOUGHT GENERATED]: :(');
+    if(valueIsBetween(selectedNum, 0.8, 1)){
+        
         mood -= getRandomArbitrary(0.3,0.5);
         arousal -= getRandomArbitrary(0.5,0.7);
-        console.log(`arousal: ${arousal} mood: ${mood}`);
-        return ':C';
+        thought = ':C';
     }
 
-    console.log('[THOUGHT GENERATED]: ...');
-    console.log(`arousal: ${arousal} mood: ${mood}`);
-    return '...';
+
+    
     
 }
-setInterval(generateThought, 1000);
+setInterval(generateThought, 100);
+
+const printStats = () => {
+    console.log(`[THOUGHT GENERATED] ${thought}`);
+    console.log(`arousal: ${arousal} mood: ${mood}`);
+}
+setInterval(printStats, 2000);
 
 class emotion {
     static NEUTRAL = 'neutral';
@@ -174,35 +238,77 @@ const emotions = [
     'happy',
 ];
 
-/**
- * Returns a random integer between min (inclusive) and max (inclusive).
- * The value is no lower than min (or the next integer greater than min
- * if min isn't an integer) and no greater than max (or the next integer
- * lower than max if max isn't an integer).
- * Using Math.round() will give you a non-uniform distribution! \
- * see: https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
- */
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+const emotionTime = {
+    neutralTime:0.001,
+    angryTime:0.001,
+    sadTime:0.001,
+    boredTime:0.001,
+    confusedTime:0.001,
+    happyTime:0.001,
+    accumulateEmotionTime(emotion, dt){
+        if (emotion === 'neutral'){
+            this.neutralTime += dt;
+        }
+        if (emotion === 'angry'){
+            this.angryTime += dt;
+        }
+        if (emotion === 'sad'){
+            this.sadTime += dt;
+        }
+        if (emotion === 'bored'){
+            this.boredTime += dt;
+        }
+        if (emotion === 'confused'){
+            this.confusedTime += dt;
+        }
+        if (emotion === 'happy'){
+            this.happyTime += dt;
+        }
+    },
+    getTotalTime() {
+        return this.neutralTime + this.angryTime +
+        this.sadTime + this.boredTime + this.confusedTime + 
+        this.happyTime;
+    },
+    printEmotionPercentage(){
+        let totaltime = this.getTotalTime();
+        let nCent = this.neutralTime / totaltime * 100;
+        let aCent = this.angryTime / totaltime * 100;
+        let sCent = this.sadTime / totaltime * 100;
+        let bCent = this.boredTime / totaltime * 100;
+        let cCent = this.confusedTime / totaltime * 100;
+        let hCent = this.happyTime / totaltime * 100;
+        nCent = nCent.toPrecision(2);
+        aCent = aCent.toPrecision(2);
+        sCent = sCent.toPrecision(2);
+        bCent = bCent.toPrecision(2);
+        cCent = cCent.toPrecision(2);
+        hCent = hCent.toPrecision(2);
+
+        
+        console.log(`N: ${nCent} ,${aCent}%,S: ${sCent}%,B: ${bCent}%,C: ${cCent}%, H:${hCent}%, `);
+        let text = `% time in Mood: o_o = ${nCent}% // :) = ${hCent}% // >< = ${aCent}% // :c = ${sCent}% // -_- = ${bCent}% //o_0 = ${cCent}%`;
+        ctx.fillStyle = 'black';
+        ctx.font = '12px arial';
+        ctx.fillText(text, originX-8*unit, originY+5*unit);
+    }
 }
 
 let num = 0;
 let text = '';
 // state machine
 const changeEmotion = () => {
-    console.log(`selectedNum = ${num}`);
+    
     const numOfEmotions = emotions.length;
 
-    
+    // calculate time spent in each mood
     if (arousal === 0 && mood === 0) {
         currentEmotion = 'neutral';
     } 
-    if (arousal > 1 &&  mood < 0){
+    if (arousal > 2 &&  mood < 0){
         currentEmotion = 'angry';
     }
-    if ( arousal < 1 && mood < 0) {
+    if ( arousal < 2 && mood < 0) {
         currentEmotion = 'sad';
     }
     if (arousal === 0 && mood < 1) {
@@ -211,27 +317,9 @@ const changeEmotion = () => {
     if ( arousal > 1 && mood > 1) {
         currentEmotion = 'happy';
     }
-    
-    /*
-    text = '';
-    const selectText = () => {
-        
-        const texts = {
-            "neutral": ['', 'hi'],
-            "angry": ['grrr', 'go away'],
-            "sad": ['*sob*', 'why?'],
-            "bored": ['eh', 'meh', '...'],
-            "confused": ['what?', 'why?'],
-            "happy": ['he he', 'lol', 'hur hur']
-        }
-        let rng = getRandomInt(0, texts[currentEmotion].length-1);
-        return texts[currentEmotion][rng];
-    }
-    text = selectText();
-    */
+    return currentEmotion;
 }
-
-setInterval(changeEmotion, 2000);
+// setInterval(changeEmotion, 100);
 
 const pi = Math.PI;
 
@@ -291,14 +379,7 @@ const getRadiansFromDegrees = (degrees) => {
 
 
 const unit =32;
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const frameX = (currentFrame % totalFrames) * spriteWidth;
-    // ctx.drawImage(spriteSheet, frameX, 0, spriteWidth, spriteHeight, 100, 100, spriteWidth, spriteHeight);
-    //ctx.drawImage(spriteSheet, frameX, 0, spriteWidth, spriteHeight, canvas.width/2, canvas.height/2, spriteWidth, spriteHeight);
-    drawFace(currentEmotion);
-    talk();
-}
+
 
 const talk = (emotion) => {
 
@@ -433,7 +514,7 @@ setupEmotionButtons();
  */
 function drawFace(emotion='neutral') {
 
-    //console.log(`[EMOTION]: ${emotion}`)
+    
     const radians = new Radians();
     const counterClockwise = true;
     const unit = 32;
@@ -530,17 +611,40 @@ function drawFace(emotion='neutral') {
     drawEyeR(angleR1, angleR2)
 }
 
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const frameX = (currentFrame % totalFrames) * spriteWidth;
+    // ctx.drawImage(spriteSheet, frameX, 0, spriteWidth, spriteHeight, 100, 100, spriteWidth, spriteHeight);
+    //ctx.drawImage(spriteSheet, frameX, 0, spriteWidth, spriteHeight, canvas.width/2, canvas.height/2, spriteWidth, spriteHeight);
+    drawFace(currentEmotion);
+    talk();
+}
 
+let totalFrameTimeUntilEmotionChange = 0;
 function update(timestamp) {
     if (timestamp - lastFrameTime >= frameDuration) {
         currentFrame = (currentFrame + 1) % totalFrames;
         lastFrameTime = timestamp;
     }
-    draw();
+    let lastEmotion = currentEmotion;
+    totalFrameTimeUntilEmotionChange += frameDuration;
+    currentEmotion = changeEmotion();
+    if (currentEmotion !== lastEmotion){
+        emotionTime.accumulateEmotionTime(lastEmotion, totalFrameTimeUntilEmotionChange);
+        totalFrameTimeUntilEmotionChange = 0;
+    }
+    
     // talk(currentEmotion);
-    
     requestAnimationFrame(update);
-    
+    draw();
+    // draw text
+    ctx.fillStyle = 'black';
+    ctx.font = '12px arial';
+    let formattedMood = mood.toPrecision(3);
+    let formattedArousal = arousal.toPrecision(3);   
+    ctx.fillText(`mood: ${formattedMood}/ stimulation_level:${formattedArousal}`, originX, originY - 5*unit );
+    // END draw text
+    emotionTime.printEmotionPercentage();
 }
 
 
