@@ -854,7 +854,8 @@ function setupTodo(){
 function setUpProjectLinks(){
     const projectDiv = $.getElementById('project-links');
     let a = $.createElement('a');
-    a.href='./canvas/index.html';
+    a.href='./mood-simulator/index.html';
+    a.textContent = 'Mood Simulator';
     projectDiv.appendChild(a);
 }
 
