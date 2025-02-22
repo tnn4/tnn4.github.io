@@ -852,11 +852,18 @@ function setupTodo(){
 // END TODO
 
 function setUpProjectLinks(){
+    const projectList = ['mood-simulator', 'rpg'];
     const projectDiv = $.getElementById('project-links');
-    let a = $.createElement('a');
-    a.href='./mood-simulator/index.html';
-    a.textContent = 'Mood Simulator';
-    projectDiv.appendChild(a);
+    
+    projectList.forEach((e) => {
+        let a = $.createElement('a');
+        a.href=`./${e}/index.html`;
+        a.textContent = `${e}`;
+        projectDiv.appendChild(a);
+    });
+    
+    
+    
 }
 
 // START main
