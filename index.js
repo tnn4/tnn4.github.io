@@ -257,6 +257,8 @@ const umaSupportIds = {
   30062: { name: "Silence Suzuka", stat: "st", title: "Winning Dream", tier: null, count: 0 }
 };
 
+// Assume umaSupportIds is defined globally before this script runs.
+
 const supportNameList = [];
 for (const [key, value] of Object.entries(umaSupportIds)) {
     if (value.name !== null) {
@@ -264,7 +266,7 @@ for (const [key, value] of Object.entries(umaSupportIds)) {
     }
 }
 
-// Initialize cardCount object with all possible card IDs set to 0
+// Initialize cardCount object with all possible card IDs set to 0 (Keep as is)
 const cardCount = {};
 for (let i = 10001; i <= 10072; i++) {
   cardCount[i] = 0;
@@ -277,351 +279,244 @@ for (let i = 30001; i <= 30062; i++) {
 }
 //
 
-
-
 const getFirstDigit = (num) => {
-  // Convert the number to its absolute value to handle negative numbers consistently
-  const absoluteNum = Math.abs(num); 
-  
-  // Convert the absolute number to a string
-  const numString = String(absoluteNum); 
-  
-  // Get the first character of the string, which is the first digit
-  const firstDigitChar = numString[0];
-  
-  // Convert the character back to a number
-  const firstDigit = Number(firstDigitChar);
-  
-  return firstDigit;
+    const absoluteNum = Math.abs(num); 
+    const numString = String(absoluteNum); 
+    const firstDigitChar = numString[0];
+    const firstDigit = Number(firstDigitChar);
+    return firstDigit;
 }
 
-const getUmaSupportPoolCount = () => {
-    let totalR = 0;
-    let totalSR = 0;
-    let totalSSR = 0;
-    for (const [key,value] of Object.entries(umaSupportIds)){
-        if ( getFirstDigit(key) === 1 && value.name !== null){
-            totalR += 1
-        }
-        if ( getFirstDigit(key) === 2 && value.name !== null){
-            totalSR += 1
-        }
-        if ( getFirstDigit(key) === 3 && value.name !== null){
-            totalSSR += 1
-        }
-    }
-    const totalPoolFor = {
-        "R": totalR,
-        "SR": totalSR,
-        "SSR": totalSSR
-    }
-    return totalPoolFor;
-}
+// ... (Keep getUmaSupportPoolCount and the RATE/COUNT constants)
 
-const totalPool = getUmaSupportPoolCount();
+// Define DOM elements
 
-console.log("Total R cards in pool = " + totalPool["R"]);
-console.log("Total SR cards in pool = " + totalPool["SR"]);
-console.log("Total SSR cards in pool = " + totalPool["SSR"]);
+const app = document.getElementById("app");
+const supportDropdown = document.getElementById("supportDropdown");
+const caratsInput = document.getElementById("caratInput");
+const scoutTenBtn = document.getElementById("scoutTenBtn");
+const autoScoutBtn = document.getElementById("autoScoutBtn");
+const totalPullsSpan = document.getElementById("totalPulls");
+const caratsTotalStatSpan = document.getElementById("caratsTotalStat");
+const moneySpentStatSpan = document.getElementById("moneySpentStat");
+const caratsRemainingStatSpan = document.getElementById("caratsRemainingStat");
 
-// There are 69 R characters each with a rate of 1.106%
-const R_RATE = 0.79;
-const R_COUNT = totalPool["R"];
-// There are 30 SR characters each with a rate of 0.6%
-const SR_RATE = 0.18;
-const SR_BULK_PULL_RATE = 0.97;
-const SR_COUNT = totalPool["SR"];
-// There are 39 SSR characters each with a rate of 0.04%
-const SSR_RATE = 0.03;
-const SSR_BULK_PULL_RATE = 0.03;
-const SSR_COUNT = totalPool["SSR"];
-
-let getRandomElementFromObject = (obj) => {
-    const keys = Object.keys(obj);
-    const randomIndex = Math.floor(Math.random() * keys.length);
-    const randomKey = keys[randomIndex];
-    return obj[randomKey];
-}
-
-
-// pull rate = percentage / # of characters
 
 let deck = [];
-let deckObj = {
-    "test":1,
-};
-let cardHtml = [];
+let deckObj = {};
 let deckHtmlObj = {};
-let cardCountHtml = [];
 
-let total_money = 0;
 let total_money_spent = 0;
-
-let _caratsSaved = 0;
 let carats=0;
 let caratsTotal=0;
-
-let gotSTier = false;
-let pull_count = 0;
+let found = false;
+let intervalId = null;
 
 const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-let found = false;
-let buffer = "";
-function scoutForSupport(supportName="Kitasan Black", rarity="SSR") {
-    
-    if (found) {
+const capitalizeFirstLetterOfEachWord = (str) => {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+};
+const sanitizeValue = (str) => {
+    return capitalizeFirstLetterOfEachWord(str.trim().toLowerCase());
+}
+
+// === Card Creation and Display Logic ===
+
+function createAnimatedCard(id) {
+  const card = document.createElement("div");
+  card.classList.add("col");
+
+  const cardInner = document.createElement("div");
+  cardInner.classList.add("card-inner");
+
+  // Card back (Umamusume style back)
+  const cardBack = document.createElement("div");
+  cardBack.classList.add("card-back");
+
+  // Card front (The actual card image and info)
+  const cardFront = document.createElement("div");
+  cardFront.classList.add("card-front");
+
+  const cardName = umaSupportIds[id].name;
+  const wikiName = cardName.replace(/ /g, "_").replace(/'/g, "").replace(/é/g, "e");
+  
+  // Use the updated image paths and a clean structure
+  cardFront.innerHTML = `
+    <div class="uma-card-container">
+      <img class="uma-card-image" src="img/uma-support/${id}.png" alt="${cardName}" />
+      <img class="uma-rarity-icon" src="img/utx_txt_rarity_0${getFirstDigit(id)}.png" alt="rarity" />
+      <img class="uma-stat-icon" src="img/utx_ico_obtain_${umaSupportIds[id].stat}.png" alt="stat" />
+      <div class="uma-card-overlay">
+        <h4>${deckHtmlObj[id].count}x
+          <a target="_blank" href="https://umamusu.wiki/${wikiName}">
+            ${cardName}
+          </a>
+        </h4>
+      </div>
+    </div>
+  `;
+
+  // Add SSR glow for visual effect
+  if (getFirstDigit(id) === 3) {
+    cardFront.classList.add("ssr-glow");
+  }
+
+  cardInner.appendChild(cardBack);
+  cardInner.appendChild(cardFront);
+  card.appendChild(cardInner);
+
+  return card;
+}
+
+async function revealCardsSequentially(ids) {
+  const deckOutput = document.createElement("div");
+  deckOutput.classList.add("gacha-pull-row"); // Use a specific class for the flex/grid layout of pulled cards
+
+  for (let i = 0; i < ids.length; i++) {
+    const cardElement = createAnimatedCard(ids[i]);
+    deckOutput.appendChild(cardElement);
+
+    // Add small delay for sequential reveal (Adjust for speed)
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // Flip the card
+    const inner = cardElement.querySelector(".card-inner");
+    inner.classList.add("card-flipped");
+  }
+
+  // Update the output display with the new pulls
+  divOutput.innerHTML = "";
+  divOutput.appendChild(deckOutput);
+}
+
+// === Core Gacha Logic ===
+
+function updateStatsDisplay() {
+    totalPullsSpan.textContent = deck.length;
+    caratsTotalStatSpan.textContent = caratsTotal;
+    moneySpentStatSpan.textContent = total_money_spent.toFixed(2);
+    caratsRemainingStatSpan.textContent = carats;
+}
+
+function resetDeck() {
+    deck = [];
+    deckObj = {};
+    deckHtmlObj = {};
+    total_money_spent = 0;
+    carats = parseInt(caratsInput.value, 10) || 0; // Use the value from the input field
+    caratsTotal = 0;
+    found = false;
+}
+
+function stopAutoScout() {
+    if (intervalId !== null) {
         clearInterval(intervalId);
-        //clearInterval(setIntervalId2);
-        console.log("Cleared intervals");
-        return;
+        intervalId = null;
+        console.log("Auto-scout stopped.");
     }
-    // pay
-    
-        if (carats < 1500) {
-            carats += 5000;
-            caratsTotal += 5000;
-            total_money_spent += 69.99;
-        }
+}
 
-    carats -= 1500;
+async function scoutForSupport(supportName="Kitasan Black") {
+    if (found) return;
 
-    // pull
-    // rarity = "";
-    let pulled;
-    let card;
-
-    
+    // --- Helper Functions (nested to keep scope clean) ---
     const pullSupport = (rarity="R") => {
-        
-        if (rarity === "SSR") {
-            minId = 30001;
-            maxId = 30062;
-            console.log("Pulling SSR");
-        } else if (rarity === "SR") {
-            minId = 20001;
-            maxId = 20035;
-            console.log("Pulling SR");
-        } else {
-            minId = 10001;
-            maxId = 10072;
-            console.log("Pulling R");
-        }
-        let id;
+        let minId, maxId;
+        if (rarity === "SSR") { minId = 30001; maxId = 30062; }
+        else if (rarity === "SR") { minId = 20001; maxId = 20035; }
+        else { minId = 10001; maxId = 10072; }
 
-        id = getRandomNumber(minId,maxId);
-        console.log("id pulled " + id);
-        card = umaSupportIds[id];
-
-        // check if id is undefined, if so, pull again
+        let id = getRandomNumber(minId, maxId);
+        let card = umaSupportIds[id];
         while (card === undefined) {
-            console.log("undefined pull, trying again!");
-            id = getRandomNumber(minId,maxId);
+            id = getRandomNumber(minId, maxId);
             card = umaSupportIds[id];
-            //window.confirm("pulled undefined card, trying again?");
         }
-        // window.confirm(`Pulled ${card.name} [${rarity}]!`);
-        console.log('Card name ' + card.name);
-        console.log(`${id}`);
-        
-        
-        // track count of each card pulled
         cardCount[id] += 1;
-
-
         return id;
     }
 
     const addToDeck = (id) => {
-
         if (!(id in deckObj)){
-            console.log("NEW CARD!!!")
             deckObj[id] = 1;
-            cardHtml.push(`
-            <a href="https://umamusu.wiki/${umaSupportIds[id].name.replace(/ /g, "_").replace(/'/g, "").replace(/é/g, "e")}">
-                <img src="img/uma-support/${id}.png" alt="${umaSupportIds[id]}"> 
-            </a> `);
-            deckHtmlObj[id] = {
-                imgHtml: `
-                    <a href="https://umamusu.wiki/${umaSupportIds[id].name.replace(/ /g, "_").replace(/'/g, "").replace(/é/g, "e")}">
-                        <img src="img/uma-support/${id}.png" alt="${umaSupportIds[id]}">
-                    </a>
-                `,
-                count: 1
-            };
+            deckHtmlObj[id] = { count: 1 };
         } else {
-            if (deckHtmlObj[id] !== undefined){
-                deckHtmlObj[id].count += 1;
-            }
             deckObj[id] += 1;
-            umaSupportIds[id].count += 1;
-            console.log(`${id}: ${deckObj[id]}`);
+            if (deckHtmlObj[id] !== undefined) deckHtmlObj[id].count += 1;
         }
         deck.push(id);
-        //window.alert(`Added ${umaSupportIds[id].name} to deck!`);
-        console.log(`deckHtmlObj: ${deckHtmlObj}`);
-    }
+    };
+    // --- End Helper Functions ---
 
-    let randomInteger;
+    // Cost: 1500 Carats per 10x scout
+    if (carats < 1500) {
+        carats += 5000;
+        caratsTotal += 5000;
+        total_money_spent += 69.99; // Standard cost of biggest Carat pack
+    }
+    carats -= 1500;
+    caratsTotal += 1500;
+
+    let pulledIds = [];
+
+    // Pull 10 cards (Same logic as before)
     for (let i = 0; i < 10; i++) {
-        console.log(`Pull #${i + 1}`);
+        let randomInteger = getRandomNumber(1, 100);
         let rarity = "";
-        
-        randomInteger = getRandomNumber(1, 100);
-        // For the first 9 pulls, normal rates apply
+
         if (i < 9) {
-        // SSR rate is 3%
-if (i < 9) {
-    if (randomInteger <= 3) {
-        rarity = "SSR";
-    } else if (randomInteger <= 21) {
-        rarity = "SR";
-    } else {
-        rarity = "R";
-    }
-}
-        } else if (i === 9) {
-            // On the 10th pull, guaranteed SR or better
-            // SSR rate is 3%
-    if (randomInteger <= 3) {
-        rarity = "SSR";
-    } else {
-        rarity = "SR";
-    }
+            // Normal rates: SSR 3%, SR 18%, R 79%
+            if (randomInteger <= 3) rarity = "SSR";
+            else if (randomInteger <= 21) rarity = "SR";
+            else rarity = "R";
+        } else {
+            // 10th pull guaranteed SR or better: SSR 3%, SR 97%
+            rarity = (randomInteger <= 3) ? "SSR" : "SR";
         }
-        id = pullSupport(rarity);
+
+        const id = pullSupport(rarity);
         addToDeck(id);
+        pulledIds.push(id);
     }
 
+    // Animate card reveal
+    await revealCardsSequentially(pulledIds);
 
-    for (const [key, value] of Object.entries(cardCount)) {
-        if (value > 0) {
-            cardCountHtml.push(`${umaSupportIds[key].name} x${value}`);
-        }
-    }
-    let deckOutput = document.createElement("div");
-    deckOutput.class = "row";
-    let deckList = [];
-    let ogName = "";
-    let wikiName = "";
+    // Update stats after pull
+    updateStatsDisplay();
 
-    for (const [key, value] of Object.entries(deckHtmlObj)) {
-        if (value.count >= 1) {
-            
-            ogName = umaSupportIds[key].name;
-            wikiName = ogName.replace(/ /g, "_").replace(/'/g, "").replace(/é/g, "e");
-            deckHtmlObj[key].imgHtml = `
-
-            <div class="parent">
-                <img class="image1" src="img/uma-support/${key}.png" alt="${umaSupportIds[key]}" />
-                <img class="image2" src="img/utx_txt_rarity_0${getFirstDigit(key)}.png" alt="rarity" />
-                <img class="image3" src="img/utx_ico_obtain_${umaSupportIds[key].stat}.png" alt="stat" />
-                <div class="parentcontent"><h3>${value.count}x <a target="_blank"href="https://umamusu.wiki/${wikiName}">${umaSupportIds[key].name}</a> [${umaSupportIds[key].title}]</h3></div>
-            </div>
-
-            `;
-            //console.log(`deckHtmlObj[key].imgHtml: ${deckHtmlObj[key].imgHtml}`);
-            deckList.push(deckHtmlObj[key].imgHtml);
-        }
-    }
-    
-    const columns = 10;
-    buffer = "";
-    for (let i = 1; i < deckList.length+1; i++) {
-        if ((i-1) % columns === 0) {
-            if (i !== 1) {
-                buffer += "</div>";
-            }
-            buffer += "<div class='row'>"
-        }
-        buffer += "<div class='col'>"
-        buffer += deckList[i-1];
-        buffer += "</div>";
-    }
-    
-    deckOutput.innerHTML = buffer;
-
-    // check if pulled support is the one we're scouting for
-    for (let id in deck) {
-        if (umaSupportIds[deck[id]].name === supportName && id > "30000") {
-            window.alert(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
-            console.log(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
+    // Check if target support pulled (The target is always the SSR version, ID starting with 3)
+    for (let id of pulledIds) {
+        if (
+            umaSupportIds[id].name.toLowerCase() === supportName.toLowerCase() &&
+            getFirstDigit(id) === 3
+        ) {
             found = true;
+            stopAutoScout();
+            
+            // Display a special Umamusume-style success message in the results area
             divPulled.innerHTML = `
-                <h2>Got ${supportName}!</h2>
-                <div class="container">
-                    <img src="img/uma-support/${id}.png" alt="${deck[id].name}">
+                <div class="uma-success-message">
+                    <h2>🎉 Congratulations! You got ${supportName}! 🎉</h2>
+                    <img class="uma-banner-image" src="img/uma-support/${id}.png" alt="${supportName} acquired">
+                    <p>Total Carats Used: <strong>${caratsTotal}</strong></p>
+                    <p>Total Money Spent: <strong>$${total_money_spent.toFixed(2)}</strong></p>
+                    <p>Total Pulls: <strong>${deck.length}</strong></p>
                 </div>
-                <h3><img src="img/uma-carat-64x64.png" alt="Carats">:${caratsTotal}</h3>
-                <h3>Total Spent: $${total_money_spent.toFixed(2)}</h3>
-                <h3>Total pulls: ${deck.length}</h3>
-                <h3>Deviance from expected pulls (2500): ${Math.sqrt((deck.length - 2500)**2)}</h3>
-                <h3>Deck:</h3>
-                 ${buffer}
-                `;
-            document.getElementById("keyvisual").src = "img/uma-key-visual-expensive.png";         
+            `;
+
+            window.alert(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
             return;
         }
-    }       
-
-    divOutput.innerHTML = "";
-   divOutput.appendChild(deckOutput);
-   printDeck();
-   
-}
-
-
-function printDeck() {
-    console.log(`carats left: ${carats}`);
-    console.log(`Total money spent so far: $${total_money_spent.toFixed(2)}`);
-    console.log(`Current deck: ${deck.join(", ")}`);
-    console.log(`Total pulls so far: ${deck.length}`);
-
-    console.log(`deckObj: ${deckObj}`)
-    for (const key in deckObj) {
-        console.log(`id:${key},  ${deckObj[key]}`);
     }
 }
 
-const test = () => {
-    console.log("Test function called");
-}
-var intervalId;
-var setIntervalId;
+// === Event Listeners and Initialization ===
 
-
-
-
-/* APP */
-const app = document.getElementById("app");
-
-// Carat input field
-// Carat input
-const caratInputLabel = document.createElement("label");
-caratInputLabel.htmlFor = "caratInput";
-caratInputLabel.innerHTML = "Enter <img src='img/uma-carat-32x32.png' alt='Carats'>:";
-app.appendChild(caratInputLabel);
-
-// Saved Carats Input field
-const caratsInput = document.createElement("input");
-caratsInput.type = "number";
-caratsInput.value = 15000;
-caratsInput.id = "caratInput";
-app.appendChild(caratsInput);
-app.appendChild(document.createElement("br"));
-//
-
-// Scout Input Field
-// Scout for input
-const scoutForInputLabel = document.createElement("label");
-scoutForInputLabel.htmlFor = "scoutForInput";
-scoutForInputLabel.textContent = "Scout for:";
-app.appendChild(scoutForInputLabel);
-
-// Dropdown menu for support
-const supportDropdown = document.createElement("select");
+// Initialize Support Dropdown
 supportNameList.forEach(supportName => {
     const option = document.createElement("option");
     option.value = supportName;
@@ -631,82 +526,46 @@ supportNameList.forEach(supportName => {
     }
     supportDropdown.appendChild(option);
 });
-supportDropdown.id = "supportDropdown";
 
-app.appendChild(supportDropdown);
-
-/*
-// Input field
-const scoutForInput = document.createElement("input");
-scoutForInput.type = "text";
-scoutForInput.id = "scoutForInput";
-scoutForInput.value = "kitasan black";
-*/
-
-// Add dropdown menu for rarity
-const rarityDropdown = document.createElement("select");
-rarityDropdown.id = "rarityDropdown";
-const rarities = ["SSR", "SR", "R"];
-rarities.forEach(rarity => {
-    const option = document.createElement("option");
-    option.value = rarity;
-    option.textContent = rarity;
-    rarityDropdown.appendChild(option);
+// Scout 10 Button
+scoutTenBtn.addEventListener("click", () => {
+    if (found) return; // Prevent single pulls after target is found
+    const targetSupport = sanitizeValue(supportDropdown.value);
+    scoutForSupport(targetSupport);
 });
-app.appendChild(rarityDropdown);
 
-
-const capitalizeFirstLetterOfEachWord = (str) => {
-    str.trim().toLowerCase();
-    return str.replace(/\b\w/g, char => char.toUpperCase());
-  };
-const sanitizeValue = (str) => {
-    return capitalizeFirstLetterOfEachWord(str.trim().toLowerCase());
-}
-// app.appendChild(scoutForInput);
-// Scout button
-const scoutForInputButton = document.createElement("button");
-scoutForInputButton.textContent = "Scout 10";
-scoutForInputButton.addEventListener("click", () => {
-  // Add functionality here
-  const sanitizedInput = capitalizeFirstLetterOfEachWord(supportDropdown.value.trim().toLowerCase());
-  scoutForSupport(sanitizedInput);
-});
-app.appendChild(scoutForInputButton);
-//
-
-/*
-// Auto Scout with saved carats button
-const autoScoutButton = document.createElement("button");
-autoScoutButton.textContent = "Auto Scout with Saved Carats";
-autoScoutButton.addEventListener("click", () => {
-  // Add functionality here
-  const sanitizedInput = sanitizeValue(supportDropdown.value);
-});
-app.appendChild(autoScoutButton);
-*/
-//
-
-function runPulls() {
-    const resetFound = () => {
-        found = false;
+// Auto Scout Button
+autoScoutBtn.addEventListener("click", () => {
+    if (intervalId !== null) {
+        stopAutoScout();
+        autoScoutBtn.textContent = "Auto Scout Until Found";
+        return;
     }
-    const resetDeck = () => {
-        deck = [];
-        deckObj = {};
-        cardHtml = [];
-        deckHtmlObj = {};
-        cardCountHtml = [];
-        total_money = 0;
-        total_money_spent = 0;
-        carats=0;
-        caratsTotal=0;
-        pull_count = 0;
-    }
-    resetFound();
+    
+    // Initial setup before starting auto-scout
     resetDeck();
-    clearInterval(intervalId);
-    // intervalId = setInterval(scoutForSupport, 250, sanitizeValue(scoutForInput.value));
-    console.log("Looking for " + sanitizeValue(supportDropdown.value));
-    intervalId = setInterval(scoutForSupport, 250, sanitizeValue(supportDropdown.value));
-}
+    updateStatsDisplay(); // Display initial/reset stats
+    divPulled.innerHTML = '<h2>Scout Results</h2><p>Auto scouting...</p>';
+    
+    const targetSupport = sanitizeValue(supportDropdown.value);
+    autoScoutBtn.textContent = "STOP Auto Scout";
+
+    // Start auto-scout loop
+    intervalId = setInterval(() => {
+        if (found) {
+            stopAutoScout();
+            autoScoutBtn.textContent = "Auto Scout Until Found";
+            return;
+        }
+        // Use an IIFE or separate function to call the async scout
+        (async () => {
+            await scoutForSupport(targetSupport);
+        })();
+    }, 10); // Small delay to simulate pulling and prevent freezing
+});
+
+// Initial state setup
+document.addEventListener('DOMContentLoaded', () => {
+    carats = parseInt(caratsInput.value, 10) || 0;
+    updateStatsDisplay();
+});

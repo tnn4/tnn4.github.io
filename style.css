@@ -1,117 +1,133 @@
-/* see: https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-another-in-html
-*/
-.parent {
-  position: relative;
-  top: 0;
-  left: 0;
-  border: 3px red dashed;
-}
-.parentcontent { margin-left: 5px; margin-top: 0px;}
-
-.image1 {
-  position: relative;
-  top: 0;
-  left: 0;
-  border: 1px red solid;
-  z-index: 0;
-}
-.image1content { margin-left: 5px; margin-top: 0px;}
-.image2 {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  border: 1px green solid;
-  z-index: 1;
-  transform: scale(0.6);
-}
-.image3 {
-  position: absolute;
-  top: 0px;
-  left: 70px;
-  border: 1px blue solid;
-  z-index: 1;
-  transform: scale(0.6);
-}
-
-/*
-Usage: 
-<div class="parent">
-  <img class="image1" src="https://via.placeholder.com/50" />
-  <img class="image2" src="https://via.placeholder.com/100" />
-  <img class="image3" src="https://via.placeholder.com/150" />
-</div>
-*/
-
-/* Container holding the image and the text */
-.container {
-  position: relative;
+/* Body & header */
+body {
+  font-family: 'Verdana', sans-serif;
+  background: linear-gradient(to bottom, #ffe6f2, #fff0f7);
+  color: #333;
   text-align: center;
-  color: black;
+  margin: 0;
+  padding: 0;
 }
 
-/* Bottom left text */
-.bottom-left {
-  position: absolute;
-  bottom: 8px;
-  left: 16px;
+.header h1 {
+  color: #ff66b2;
+  text-shadow: 2px 2px #fff;
 }
 
-/* Top left text */
-.top-left {
-  position: absolute;
-  top: 8px;
-  left: 16px;
+.header h3 {
+  color: #ff66b2;
+  margin: 5px 0 20px 0;
 }
 
-/* Top right text */
-.top-right {
-  position: absolute;
-  top: 8px;
-  right: 16px;
+/* App container */
+#app {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  background: #fff0f7;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
-/* Bottom right text */
-.bottom-right {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
+/* Buttons */
+button {
+  background: linear-gradient(to bottom, #ff99cc, #ff66b2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px 5px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.bottom-right2 {
-  position: relative;
-  bottom: 0px;
-  right: 10px;
-  border: 1px solid black;
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(255, 102, 178, 0.6);
 }
 
-/* Centered text */
-.centered {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid red;
-} 
+/* Input & select styling */
+input, select {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 10px;
+  border: 1px solid #ff99cc;
+  font-size: 14px;
+}
 
-/* END */
-
-
-.imageflex { display: flex; }
-.imageflexcontent { margin-left: 5px; margin-top: 0; }
-
-/* Usage: <div class="imageflex">
-  <img src="https://images.unsplash.com/photo-1487111023822-2e903e12f6f0?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=387&q=80" height="280px">
-
-  <p class="imageflexcontent">Photo by <a href="https://unsplash.com/@filipz?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Filip Zrnzević</a> on <a href="https://unsplash.com/s/photos/forest?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></p>
-</div>
-*/
-
+/* Deck layout */
 .row {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-.column {
-  flex: 20%;
-  padding: 5px;
+.col {
+  margin: 5px;
 }
 
+/* Card styling */
+.parent {
+  position: relative;
+  width: 120px;
+  height: 180px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  background: #fff;
+  transition: transform 0.3s;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.parent:hover {
+  transform: scale(1.05);
+}
+
+.parent img.image1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.parent img.image2, .parent img.image3 {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+}
+
+.image2 { top: 5px; left: 5px; }
+.image3 { bottom: 5px; right: 5px; }
+
+.parentcontent {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+/* Pulled notification */
+#pulled {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 15px;
+  background: linear-gradient(to right, #ffccff, #ff99cc);
+  box-shadow: 0 5px 15px rgba(255,102,178,0.3);
+  animation: glow 1s infinite alternate;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(255,102,178,0.6); }
+  to { box-shadow: 0 0 20px rgba(255,102,178,1); }
+}
