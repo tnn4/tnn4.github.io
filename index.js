@@ -425,6 +425,8 @@ function stopAutoScout() {
         intervalId = null;
         console.log("Auto-scout stopped.");
     }
+        // Reset button text
+    autoScoutBtn.textContent = "Auto Scout Until Found";
 }
 
 async function scoutForSupport(supportName="Kitasan Black") {
@@ -515,7 +517,7 @@ for (let id of pulledIds) {
                 <p>Total Pulls: <strong>${deck.length}</strong></p>
             </div>
         `;
-        window.alert(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
+        //window.alert(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
         return;
     }
 }
@@ -561,7 +563,7 @@ autoScoutBtn.addEventListener("click", () => {
     intervalId = setInterval(() => {
         if (found) {
             stopAutoScout();
-            autoScoutBtn.textContent = "Auto Scout Until Found";
+            
             return;
         }
         // Use an IIFE or separate function to call the async scout
