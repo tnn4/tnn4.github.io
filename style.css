@@ -1,0 +1,117 @@
+/* see: https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-another-in-html
+*/
+.parent {
+  position: relative;
+  top: 0;
+  left: 0;
+  border: 3px red dashed;
+}
+.parentcontent { margin-left: 5px; margin-top: 0px;}
+
+.image1 {
+  position: relative;
+  top: 0;
+  left: 0;
+  border: 1px red solid;
+  z-index: 0;
+}
+.image1content { margin-left: 5px; margin-top: 0px;}
+.image2 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: 1px green solid;
+  z-index: 1;
+  transform: scale(0.6);
+}
+.image3 {
+  position: absolute;
+  top: 0px;
+  left: 70px;
+  border: 1px blue solid;
+  z-index: 1;
+  transform: scale(0.6);
+}
+
+/*
+Usage: 
+<div class="parent">
+  <img class="image1" src="https://via.placeholder.com/50" />
+  <img class="image2" src="https://via.placeholder.com/100" />
+  <img class="image3" src="https://via.placeholder.com/150" />
+</div>
+*/
+
+/* Container holding the image and the text */
+.container {
+  position: relative;
+  text-align: center;
+  color: black;
+}
+
+/* Bottom left text */
+.bottom-left {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+}
+
+/* Top left text */
+.top-left {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+}
+
+/* Top right text */
+.top-right {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+}
+
+/* Bottom right text */
+.bottom-right {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+}
+
+.bottom-right2 {
+  position: relative;
+  bottom: 0px;
+  right: 10px;
+  border: 1px solid black;
+}
+
+/* Centered text */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid red;
+} 
+
+/* END */
+
+
+.imageflex { display: flex; }
+.imageflexcontent { margin-left: 5px; margin-top: 0; }
+
+/* Usage: <div class="imageflex">
+  <img src="https://images.unsplash.com/photo-1487111023822-2e903e12f6f0?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=387&q=80" height="280px">
+
+  <p class="imageflexcontent">Photo by <a href="https://unsplash.com/@filipz?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Filip Zrnzević</a> on <a href="https://unsplash.com/s/photos/forest?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></p>
+</div>
+*/
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 20%;
+  padding: 5px;
+}
+

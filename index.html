@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How much $ Before I get Kitasan Black? (Uma Musume Gacha)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <div id="main-container">
+    
+    <header class="uma-header">
+      <h1>💰 Kitasan Black Gacha Simulator 🐎</h1>
+      <h3>How much money to get SSR Support Kitasan Black?</h3>
+      <a href="about.html">About</a>
+    </header>
+
+    <main class="gacha-simulator">
+      
+      <section id="app" class="uma-panel controls-panel">
+        <h2>Scout Configuration</h2>
+        <div class="control-group">
+          <label for="caratInput">Starting <img src="img/uma-carat-32x32.png" alt="Carats">:</label>
+          <input type="number" id="caratInput" value="15000">
+        </div>
+
+        <div class="control-group">
+          <label for="supportDropdown">Target Support Card:</label>
+          <select id="supportDropdown"></select>
+          </div>
+
+        <div class="button-group">
+          <button id="scoutTenBtn" class="uma-button scout-button">10x Scout (1500 <img src="img/uma-carat-32x32.png" alt="Carats">)</button>
+          <button id="autoScoutBtn" class="uma-button auto-scout-button">Auto Scout Until Found</button>
+        </div>
+      </section>
+
+      <section id="pulled" class="uma-panel results-panel">
+        <h2>Scout Results</h2>
+        <div id="output" class="scout-output">
+          <p>Cards pulled will appear here...</p>
+        </div>
+      </section>
+      
+      <section id="stats" class="uma-panel stats-panel">
+        <h2>Lifetime Stats</h2>
+        <p>Total Pulls: <span id="totalPulls">0</span></p>
+        <p>Total <img src="img/uma-carat-32x32.png" alt="Carats"> Spent: <span id="caratsTotalStat">0</span></p>
+        <p>Total Money Spent: $<span id="moneySpentStat">0.00</span></p>
+        <p>Remaining <img src="img/uma-carat-32x32.png" alt="Carats">: <span id="caratsRemainingStat">0</span></p>
+        </section>
+      
+    </main>
+
+    <footer class="uma-footer">
+      <p>Disclaimer: This is a gacha simulator. Actual results may vary (but probably not much).</p>
+    </footer>
+
+  </div>
+</body>
+</html>
