@@ -259,14 +259,6 @@ const umaSupportIds = {
 
 // Assume umaSupportIds is defined globally before this script runs.
 
-const rarityDropdown = document.getElementById("rarityDropdown");
-
-const rarityToFirstDigit = {
-    "R": 1,
-    "SR": 2,
-    "SSR": 3
-};
-
 const supportNameList = [];
 for (const [key, value] of Object.entries(umaSupportIds)) {
     if (value.name !== null) {
@@ -496,29 +488,30 @@ async function scoutForSupport(supportName="Kitasan Black") {
     // Update stats after pull
     updateStatsDisplay();
 
-const targetRarity = rarityDropdown ? rarityDropdown.value : "any";
+    // Check if target support pulled (The target is always the SSR version, ID starting with 3)
+    for (let id of pulledIds) {
+        if (
+            umaSupportIds[id].name.toLowerCase() === supportName.toLowerCase() &&
+            getFirstDigit(id) === 3
+        ) {
+            found = true;
+            stopAutoScout();
+            
+            // Display a special Umamusume-style success message in the results area
+            divPulled.innerHTML = `
+                <div class="uma-success-message">
+                    <h2>🎉 Congratulations! You got ${supportName}! 🎉</h2>
+                    <img class="uma-banner-image" src="img/uma-support/${id}.png" alt="${supportName} acquired">
+                    <p>Total Carats Used: <strong>${caratsTotal}</strong></p>
+                    <p>Total Money Spent: <strong>$${total_money_spent.toFixed(2)}</strong></p>
+                    <p>Total Pulls: <strong>${deck.length}</strong></p>
+                </div>
+            `;
 
-for (let id of pulledIds) {
-    const nameMatches = umaSupportIds[id].name.toLowerCase() === supportName.toLowerCase();
-    const rarityMatches = targetRarity === "any" || getFirstDigit(id) === rarityToFirstDigit[targetRarity];
-
-    if (nameMatches && rarityMatches) {
-        found = true;
-        stopAutoScout();
-
-        divPulled.innerHTML = `
-            <div class="uma-success-message">
-                <h2>🎉 Congratulations! You got ${supportName}! 🎉</h2>
-                <img class="uma-banner-image" src="img/uma-support/${id}.png" alt="${supportName} acquired">
-                <p>Total Carats Used: <strong>${caratsTotal}</strong></p>
-                <p>Total Money Spent: <strong>$${total_money_spent.toFixed(2)}</strong></p>
-                <p>Total Pulls: <strong>${deck.length}</strong></p>
-            </div>
-        `;
-        window.alert(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
-        return;
+            window.alert(`Got ${supportName}! Total money spent: $${total_money_spent.toFixed(2)}`);
+            return;
+        }
     }
-}
 }
 
 // === Event Listeners and Initialization ===
