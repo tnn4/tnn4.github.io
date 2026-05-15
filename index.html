@@ -1,62 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>How much $ Before I get Kitasan Black? (Uma Musume Gacha)</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="index.js" defer></script>
+    <meta charset="UTF-8">
+    <title>LLM Protocol Wrapper</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #1a1a1a; color: #d1d1d1; padding: 20px; line-height: 1.5; }
+        .station { border: 1px solid #444; padding: 15px; margin-bottom: 10px; border-radius: 5px; background: #252525; }
+        .label { color: #00ff41; font-weight: bold; margin-bottom: 5px; display: block; }
+        textarea { width: 100%; background: #000; color: #fff; border: 1px solid #333; margin-bottom: 10px; padding: 10px; box-sizing: border-box; min-height: 80px; }
+        button { background: #444; color: #fff; border: none; padding: 10px 20px; cursor: pointer; border-radius: 3px; margin-right: 5px; margin-bottom: 10px; }
+        button:hover { background: #666; }
+        #output-area { background: #0a0a0a; border: 1px solid #00ff41; padding: 15px; white-space: pre-wrap; margin-top: 20px; min-height: 50px; }
+
+        /* Readme Styling */
+        details { margin-top: 40px; border-top: 1px solid #444; padding-top: 20px; }
+        summary { cursor: pointer; color: #00ff41; font-weight: bold; font-size: 1.2em; margin-bottom: 10px; }
+        .readme-content { background: #222; padding: 20px; border-radius: 5px; border-left: 4px solid #00ff41; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #444; padding: 10px; text-align: left; }
+        th { background: #333; }
+        code { background: #000; color: #ffca28; padding: 2px 5px; border-radius: 3px; }
+        pre { background: #000; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
 </head>
 <body>
-  <div id="main-container">
-    
-    <header class="uma-header">
-      <h1>💰 Umamusume Gacha Simulator 🐎</h1>
-      <img src="img/uma-key-visual.jpg" alt="Uma Musume Key Visual" class="key-visual">
-      <h3>How much money to get SSR Support Kitasan Black?</h3>
-      <a href="about.html">About</a>
-    </header>
 
-    <main class="gacha-simulator">
-      
-      <section id="app" class="uma-panel controls-panel">
-        <h2>Scout Configuration</h2>
-        <div class="control-group">
-          <label for="caratInput">Starting <img src="img/uma-carat-32x32.png" alt="Carats">:</label>
-          <input type="number" id="caratInput" value="15000">
+    <h1>LLM Context Wrapper</h1>
+
+    <div id="nexus"></div>
+
+    <button onclick="addStation()">+ Add Another</button>
+    <button onclick="generateXML()">Generate Output</button>
+    <button onclick="downloadFile()">Download .txt</button>
+
+    <div id="output-area">Final XML will appear here...</div>
+
+    <details>
+        <summary>Why use XML for LLM Context?</summary>
+        <div class="readme-content">
+            <p>XML (Extensible Markup Language) is highly effective for structuring LLM prompts, but the reason it works isn't necessarily because the model is "parsing" a tree in the traditional computational sense. Instead, it leverages the model's training data and the way transformer architectures handle <strong>attention mechanism</strong> weights.</p>
+
+            <h3>1. Clear Semantic Delimitation</h3>
+            <p>A common issue in long-context prompting is <strong>"semantic bleed,"</strong> where the model confuses user instructions with the provided reference data.</p>
+            <ul>
+                <li><strong>Without XML:</strong> The model relies on line breaks or proximity to distinguish a document from a task.</li>
+                <li><strong>With XML:</strong> The <code>&lt;context&gt;</code> and <code>&lt;/context&gt;</code> tags act as hard anchors. Because LLMs are trained heavily on code and web data, they recognize these tags as "containers." This allows the attention mechanism to more easily assign high weights to the instruction tokens while treating the content within specific tags as a discrete "object" to be referenced rather than a part of the instruction set.</li>
+            </ul>
+
+            <h3>2. Positional and Structural Hierarchy</h3>
+            <ul>
+                <li><strong>Structural Pattern Matching:</strong> LLMs are essentially sophisticated pattern matchers. XML provides a "canonical" structure that the model has seen millions of times in its training data (HTML, config files, etc.).</li>
+                <li><strong>Reducing Perplexity:</strong> By using <code>&lt;tags&gt;</code>, you reduce the ambiguity of where a section starts and ends. This lower perplexity allows the model to "focus" its KV (Key-Value) cache more efficiently on the relevant segments when generating a response.</li>
+            </ul>
+
+            <h3>3. Handling "Lost in the Middle"</h3>
+            <p>Research has shown that LLMs often struggle to attend to information in the middle of long prompts. XML tags can mitigate this by providing <strong>re-anchoring points</strong>.</p>
+            <ul>
+                <li>If you have 10,000 words of data, wrapping specific sub-sections in tags like <code>&lt;document_1&gt;</code> or <code>&lt;policy_alpha&gt;</code> gives the model a unique token sequence to attend to when it needs to retrieve that specific information. It effectively creates a "named range" that the attention heads can jump to more reliably.</li>
+            </ul>
+
+            <h3>4. Directing Task-Specific Attention</h3>
+            <p>You can use XML to explicitly tell the model which parts of the prompt require higher "attention density."</p>
+
+            <blockquote>
+                <strong>Example Strategy:</strong>
+                <pre><code>&lt;instruction&gt;Summarize the following text, but prioritize the data in the findings section.&lt;/instruction&gt;
+&lt;source_material&gt;
+  &lt;introduction&gt;...&lt;/introduction&gt;
+  &lt;findings&gt;Critical data points here.&lt;/findings&gt;
+&lt;/source_material&gt;</code></pre>
+            </blockquote>
+
+            <p>In this structure, the model can easily map the word "findings" in the instruction to the <code>&lt;findings&gt;</code> tag in the context, creating a direct "attention bridge" between the goal and the data.</p>
+
+            <hr>
+
+            <h3>Comparison of Structure Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Effectiveness</th>
+                        <th>Best Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Plain Text</strong></td>
+                        <td>Low</td>
+                        <td>Very short, simple queries.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Markdown (#, -)</strong></td>
+                        <td>Medium</td>
+                        <td>General readability and simple hierarchy.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>XML Tags (&lt;&gt;)</strong></td>
+                        <td><strong>High</strong></td>
+                        <td>Complex prompts with multiple data sources or "few-shot" examples.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>JSON</strong></td>
+                        <td>High</td>
+                        <td>Strictly structured data or when the output must be programmatically parsed.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Summary:</strong> XML doesn't grant the LLM a new "ability" to see trees, but it exploits the model's existing training on structured data to make <strong>segmentation</strong> and <strong>information retrieval</strong> significantly more accurate.</p>
         </div>
+    </details>
 
-        <div class="control-group">
-          <label for="supportDropdown">Target Support Card:</label>
-          <select id="supportDropdown"></select>
-          </div>
+    <script>
+        let stationCount = 0;
 
-        <div class="button-group">
-          <button id="scoutTenBtn" class="uma-button scout-button">10x Scout (1500 <img src="img/uma-carat-32x32.png" alt="Carats">)</button>
-          <button id="autoScoutBtn" class="uma-button auto-scout-button">Auto Scout Until Found</button>
-        </div>
-      </section>
+        function addStation() {
+            const nexus = document.getElementById('nexus');
+            const station = document.createElement('div');
+            station.className = 'station';
+            station.innerHTML = `
+                <span class="label">ID: ${stationCount}</span>
+                <textarea class="prompt" placeholder="Enter Prompt..."></textarea>
+                <textarea class="output" placeholder="Enter Output..."></textarea>
+            `;
+            nexus.appendChild(station);
+            stationCount++;
+        }
 
-      <section id="pulled" class="uma-panel results-panel">
-        <h2>Scout Results</h2>
-        <div id="output" class="scout-output">
-          <p>Cards pulled will appear here...</p>
-        </div>
-      </section>
-      
-      <section id="stats" class="uma-panel stats-panel">
-        <h2>Lifetime Stats</h2>
-        <p>Total Pulls: <span id="totalPulls">0</span></p>
-        <p>Total <img src="img/uma-carat-32x32.png" alt="Carats"> Spent: <span id="caratsTotalStat">0</span></p>
-        <p>Total Money Spent: $<span id="moneySpentStat">0.00</span></p>
-        <p>Remaining <img src="img/uma-carat-32x32.png" alt="Carats">: <span id="caratsRemainingStat">0</span></p>
-        </section>
-      
-    </main>
+        function generateXML() {
+            const prompts = document.querySelectorAll('.prompt');
+            const outputs = document.querySelectorAll('.output');
+            let finalXML = "";
 
-    <footer class="uma-footer">
-      <p>Disclaimer: This is a gacha simulator. Actual results may vary (but probably not much).</p>
-    </footer>
+            prompts.forEach((p, index) => {
+                const id = index;
+                const pVal = p.value.trim();
+                const oVal = outputs[index].value.trim();
 
-  </div>
+                if(pVal || oVal) {
+                    finalXML += `<prompt id=${id}>\n${pVal}\n</prompt>\n\n`;
+                    finalXML += `<output id=${id}>\n${oVal}\n</output>\n\n`;
+                }
+            });
+
+            document.getElementById('output-area').textContent = finalXML || "No content to wrap.";
+        }
+
+        function downloadFile() {
+            const content = document.getElementById('output-area').textContent;
+            if (!content || content === "Final XML will appear here..." || content === "No content to wrap.") {
+                alert("Generate output first!");
+                return;
+            }
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'llm_context.txt';
+            a.click();
+        }
+
+        // Initialize with one station
+        addStation();
+    </script>
 </body>
 </html>
